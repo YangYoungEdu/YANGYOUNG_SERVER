@@ -130,12 +130,12 @@ public class StudentService {
         );
         studentRepository.save(student);
 
-        List<StudentSection> studentSectionList = studentSectionRepository.findAllByStudentId(request.getStudentId());
-        for (int i = 0; i < request.getSectionIdList().size(); i++) {
-            Section section = sectionSubService.findSectionBySectionId(request.getSectionIdList().get(i));
-            studentSectionList.get(i).updateSection(section);
-        }
-        studentSectionRepository.saveAll(studentSectionList);
+//        List<StudentSection> studentSectionList = studentSectionRepository.findAllByStudentId(request.getStudentId());
+//        for (int i = 0; i < request.getSectionIdList().size(); i++) {
+//            Section section = sectionSubService.findSectionBySectionId(request.getSectionIdList().get(i));
+//            studentSectionList.get(i).updateSection(section);
+//        }
+//        studentSectionRepository.saveAll(studentSectionList);
 
         return new StudentResponse(student);
     }
