@@ -3,11 +3,9 @@ package com.yangyoung.server.task.service;
 import com.yangyoung.server.exception.ErrorCode;
 import com.yangyoung.server.exception.MyException;
 import com.yangyoung.server.section.domain.Section;
-import com.yangyoung.server.section.domain.SectionRepository;
 import com.yangyoung.server.section.service.SectionSubService;
 import com.yangyoung.server.sectionTask.domain.SectionTask;
 import com.yangyoung.server.sectionTask.domain.SectionTaskRepository;
-import com.yangyoung.server.sectionTask.dto.request.SectionTaskRequest;
 import com.yangyoung.server.sectionTask.dto.response.SectionTaskAllResponse;
 import com.yangyoung.server.sectionTask.dto.response.SectionTaskResponse;
 import com.yangyoung.server.student.domain.Student;
@@ -23,7 +21,6 @@ import com.yangyoung.server.task.domain.TaskRepository;
 import com.yangyoung.server.task.dto.request.TaskSectionRequest;
 import com.yangyoung.server.task.dto.request.TaskStudentRequest;
 import com.yangyoung.server.task.dto.request.TaskUpdateRequest;
-import com.yangyoung.server.task.dto.response.TaskAllResponse;
 import com.yangyoung.server.task.dto.response.TaskPostResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +29,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -52,7 +48,7 @@ public class TaskService {
 
         Task task = taskRepository.save(request.toEntity());
 
-        Student student = studentSubService.isStudentExist(request.getStudentId());
+        Student student = studentSubService.findStudentByStudentId(request.getStudentId());
 
         StudentTask studentTask = StudentTask.builder().
                 student(student).
@@ -80,7 +76,7 @@ public class TaskService {
     @Transactional
     public TaskPostResponse createTaskBySection(TaskSectionRequest request) {
 
-        Section section = sectionSubService.isSectionExist(request.getSectionId());
+        Section section = sectionSubService.findSectionBySectionId(request.getSectionId());
 
         Task task = taskRepository.save(request.toEntity());
 
@@ -91,7 +87,8 @@ public class TaskService {
                 build();
         sectionTaskRepository.save(sectionTask);
 
-        List<Student> students = studentRepository.findBySectionId(section.getId());
+        List<Student> students = null;
+//        List<Student> students = studentRepository.findBySectionId(section.getId());
         List<StudentTask> studentTaskList = new ArrayList<>();
         for (Student student : students) {
             StudentTask studentTask = new StudentTask(student, task, TaskProgress.NOT_STARTED);

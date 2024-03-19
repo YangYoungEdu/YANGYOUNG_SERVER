@@ -6,6 +6,7 @@ import com.yangyoung.server.configuration.BaseEntity;
 import com.yangyoung.server.sectionLecture.domain.SectionLecture;
 import com.yangyoung.server.sectionTask.domain.SectionTask;
 import com.yangyoung.server.student.domain.Student;
+import com.yangyoung.server.studentSection.domain.StudentSection;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -32,7 +33,7 @@ Section extends BaseEntity {
 
     @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonBackReference
-    private List<Student> studentList;
+    private List<StudentSection> studentSectionList;
 
     @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonBackReference
@@ -58,6 +59,4 @@ Section extends BaseEntity {
         this.name = name;
         this.teacher = teacher;
     }
-
-
 }

@@ -1,6 +1,6 @@
 package com.yangyoung.server.student.controller;
 
-import com.yangyoung.server.student.dto.request.StudentCreationRequest;
+import com.yangyoung.server.student.dto.request.StudentCreateRequest;
 import com.yangyoung.server.student.dto.request.StudentUpdateRequest;
 import com.yangyoung.server.student.dto.response.*;
 import com.yangyoung.server.student.service.StudentService;
@@ -17,7 +17,7 @@ public class StudentController {
 
     // 학생 생성 컨트롤러
     @PostMapping("")
-    public ResponseEntity<StudentResponse> createStudent(@RequestBody final StudentCreationRequest request) {
+    public ResponseEntity<StudentResponse> createStudent(@RequestBody final StudentCreateRequest request) {
 
         final StudentResponse response = studentService.createStudent(request);
 

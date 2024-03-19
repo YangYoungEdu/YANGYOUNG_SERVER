@@ -2,18 +2,17 @@ package com.yangyoung.server.student.service;
 
 import com.yangyoung.server.lecture.dto.response.LectureAllResponse;
 import com.yangyoung.server.lecture.dto.response.LectureResponse;
-import com.yangyoung.server.lecture.service.LectureService;
 import com.yangyoung.server.lecture.service.LectureSubService;
 import com.yangyoung.server.section.domain.Section;
+import com.yangyoung.server.section.dto.response.SectionAllBriefResponse;
 import com.yangyoung.server.section.service.SectionSubService;
 import com.yangyoung.server.student.domain.Student;
 import com.yangyoung.server.student.domain.StudentRepository;
-import com.yangyoung.server.student.dto.request.StudentCreationRequest;
+import com.yangyoung.server.student.dto.request.StudentCreateRequest;
 import com.yangyoung.server.student.dto.request.StudentUpdateRequest;
 import com.yangyoung.server.student.dto.response.*;
-import com.yangyoung.server.studentTask.dto.response.StudentTaskAllResponse;
-import com.yangyoung.server.task.dto.response.TaskAllResponse;
-import com.yangyoung.server.task.service.TaskService;
+import com.yangyoung.server.studentSection.domain.StudentSection;
+import com.yangyoung.server.studentSection.domain.StudentSectionRepository;
 import com.yangyoung.server.util.UtilService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -31,8 +30,8 @@ import java.util.List;
 public class StudentService {
 
     private final StudentRepository studentRepository;
-    private final TaskService taskService;
-    private final LectureService lectureService;
+    private final StudentSectionRepository studentSectionRepository;
+
     private final StudentSubService studentSubService;
     private final SectionSubService sectionSubService;
     private final LectureSubService lectureSubService;
@@ -40,12 +39,12 @@ public class StudentService {
 
     // 학생 추가(인적 사항 기입 + 반 할당)
     @Transactional
-    public StudentResponse createStudent(StudentCreationRequest request) {
+    public StudentResponse createStudent(StudentCreateRequest request) {
 
         Student student = studentSubService.createStudentInfo(request.getId(), request.getName(), request.getSchool(),
                 request.getGrade(), request.getStudentPhoneNumber(), request.getParentPhoneNumber());
 
-        studentSubService.assignStudentToSection(student, request.getSectionId());
+        studentSubService.assignStudentToSection(student, request.getSectionIdList());
 
         return new StudentResponse(student);
     }
@@ -56,21 +55,28 @@ public class StudentService {
 
         List<Student> studentList = studentRepository.findAll();
         List<StudentResponse> studentResponseList = studentSubService.readAllStudentInfo(studentList);
+
         SearchOptionResponse searchOptionResponse = utilService.getSearchOptionList();
 
-        return new StudentAllResponse(studentResponseList, searchOptionResponse.getSectionList(),
-                searchOptionResponse.getGradeList(), searchOptionResponse.getSchoolList(), studentResponseList.size());
+        return new StudentAllResponse(
+                studentResponseList,
+                searchOptionResponse.getGradeList(),
+                searchOptionResponse.getSchoolList(),
+                studentResponseList.size());
     }
 
     // 학생 상세 조회(인적 사항 + 수강 강의 + 과제)
     @Transactional
     public StudentDetailResponse readStudentDetail(Long studentId) {
 
-        StudentResponse studentResponse = studentSubService.readStudentInfo(studentId);
-        LectureAllResponse lectureAllResponse = lectureService.getAllLecturesBySection(studentResponse.getSectionId());
-        StudentTaskAllResponse studentTaskAllResponse = taskService.readTaskByStudent(studentId);
+        StudentResponse studentResponse = studentSubService.getStudentInfo(studentId);
+        SectionAllBriefResponse sectionAllBriefResponse = sectionSubService.findSectionsBriefInfo(studentId);
+//        LectureAllResponse lectureAllResponse = lectureService.getAllLecturesBySection(studentResponse.getSectionId());
 
-        return new StudentDetailResponse(studentResponse, lectureAllResponse, studentTaskAllResponse);
+        return new StudentDetailResponse(
+                studentResponse,
+                sectionAllBriefResponse,
+                null);
     }
 
     // 학생 오늘 일정 조회(인적 사항 + 오늘 수강 강의 + 과제)
@@ -91,35 +97,45 @@ public class StudentService {
                 today,
                 studentDetailResponse.getStudentResponse(),
                 lectureAllResponse,
-                studentDetailResponse.getStudentTaskAllResponse());
+                null);
     }
 
     // 반 - 학생 정보 조회
     @Transactional
     public StudentAllResponse getAllStudentsBySection(Long sectionId) {
 
-        List<Student> studentList = studentRepository.findBySectionId(sectionId);
+        List<StudentSection> studentSectionList = studentSectionRepository.findAllBySectionId(sectionId);
+        List<Student> studentList = studentSectionList.stream()
+                .map(StudentSection::getStudent)
+                .toList();
         List<StudentResponse> studentResponseList = studentSubService.readAllStudentInfo(studentList);
 
-        return new StudentAllResponse(studentResponseList,
-                null, null, null, studentResponseList.size());
+        return new StudentAllResponse(
+                studentResponseList,
+                null,
+                null,
+                studentResponseList.size());
     }
 
-    // 학생 정보 수정
+    // 학생 정보 수정(인적 사항 + 반정보)
     @Transactional
     public StudentResponse updateStudent(final StudentUpdateRequest request) {
 
-        Student student = studentSubService.isStudentExist(request.getStudentId());
-        Section section = sectionSubService.isSectionExist(request.getSectionId());
-
+        Student student = studentSubService.findStudentByStudentId(request.getStudentId());
         student.update(
                 request.getSchool(),
                 request.getGrade(),
                 request.getStudentPhoneNumber(),
-                request.getParentPhoneNumber(),
-                section
+                request.getParentPhoneNumber()
         );
         studentRepository.save(student);
+
+        List<StudentSection> studentSectionList = studentSectionRepository.findAllByStudentId(request.getStudentId());
+        for (int i = 0; i < request.getSectionIdList().size(); i++) {
+            Section section = sectionSubService.findSectionBySectionId(request.getSectionIdList().get(i));
+            studentSectionList.get(i).updateSection(section);
+        }
+        studentSectionRepository.saveAll(studentSectionList);
 
         return new StudentResponse(student);
     }
@@ -129,8 +145,11 @@ public class StudentService {
     @Transactional
     public StudentResponse deleteStudent(Long studentId) {
 
-        Student student = studentSubService.isStudentExist(studentId);
+        Student student = studentSubService.findStudentByStudentId(studentId);
         studentRepository.delete(student);
+
+        List<StudentSection> studentSectionList = studentSectionRepository.findAllByStudentId(studentId);
+        studentSectionRepository.deleteAll(studentSectionList);
 
         return new StudentResponse(student);
     }

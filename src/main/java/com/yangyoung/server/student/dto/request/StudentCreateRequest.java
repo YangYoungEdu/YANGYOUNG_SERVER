@@ -5,10 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudentCreationRequest {
+public class StudentCreateRequest {
 
     private Long id;
 
@@ -22,6 +24,5 @@ public class StudentCreationRequest {
 
     private String parentPhoneNumber;
 
-    private Long sectionId;
-
+    private List<Long> sectionIdList;
 }

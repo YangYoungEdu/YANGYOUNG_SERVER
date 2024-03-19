@@ -22,8 +22,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -61,7 +59,7 @@ public class AttendanceService {
             throw new MyException(ErrorCode.STUDENT_NOT_FOUND);
         }
 
-        Optional<Section> attendedSection = sectionRepository.findById(attendedStudent.get().getSection().getId());
+        Optional<Section> attendedSection = sectionRepository.findById(null);
         if (attendedSection.isEmpty()) { // 해당 학생의 섹션이 존재하지 않을 때
             throw new MyException(ErrorCode.SECTION_NOT_FOUND);
         }
@@ -121,7 +119,7 @@ public class AttendanceService {
                 attendanceList.add(attendance.get());
             }
             if (attendance.isEmpty()) {
-                Student student = studentSubService.isStudentExist(attendanceUpdateRequest.getStudentId());
+                Student student = studentSubService.findStudentByStudentId(attendanceUpdateRequest.getStudentId());
 
                 Attendance newAttendance = new Attendance(
                         attendanceUpdateRequest.getAttendedDateTime(),
@@ -168,7 +166,8 @@ public class AttendanceService {
         LocalDateTime endDateTime = targetDate.atTime(23, 59, 59);
 
         List<Attendance> attendanceList = attendanceRepository.findBySectionIdAndAttendedDateTimeBetween(sectionId, startDateTime, endDateTime);
-        List<Student> studentList = studentRepository.findBySectionId(sectionId);
+        List<Student> studentList = null;
+//        List<Student> studentList = studentRepository.findBySectionId(sectionId);
         List<AttendanceResponse> attendanceResponseList = new ArrayList<>();
         for (int i = 0; i < studentList.size(); i++) {
             Optional<Attendance> attendance = attendanceRepository.findByStudentIdAndAttendedDateTimeBetween(studentList.get(i).getId(), startDateTime, endDateTime);

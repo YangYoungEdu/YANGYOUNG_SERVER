@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.yangyoung.server.configuration.BaseEntity;
 import com.yangyoung.server.studentMaterial.domain.StudentMaterial;
+import com.yangyoung.server.studentSection.domain.StudentSection;
 import com.yangyoung.server.studentTask.domain.StudentTask;
 import com.yangyoung.server.attendance.domain.Attendance;
 import com.yangyoung.server.section.domain.Section;
@@ -36,10 +37,13 @@ public class Student extends BaseEntity {
 
     private String parentPhoneNumber;
 
-    @ManyToOne()
-    @JoinColumn(name = "section_id")
-    @JsonManagedReference
-    private Section section;
+    //    @ManyToOne()
+//    @JoinColumn(name = "section_id")
+//    @JsonManagedReference
+//    private Section section;
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonBackReference
+    private List<StudentSection> studentSectionList;
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonBackReference
@@ -61,24 +65,10 @@ public class Student extends BaseEntity {
         this.studentPhoneNumber = studentPhoneNumber;
     }
 
-    public Student(Long id, String name, String school, Grade grade, String studentPhoneNumber, Section section) {
-        this.id = id;
-        this.name = name;
-        this.school = school;
-        this.grade = grade;
-        this.studentPhoneNumber = studentPhoneNumber;
-        this.section = section;
-    }
-
-    public void update(String school, Grade grade, String studentPhoneNumber, String parentPhoneNumber,Section section) {
+    public void update(String school, Grade grade, String studentPhoneNumber, String parentPhoneNumber) {
         this.school = school;
         this.grade = grade;
         this.studentPhoneNumber = studentPhoneNumber;
         this.parentPhoneNumber = parentPhoneNumber;
-        this.section = section;
-    }
-
-    public void assignedToSection(Section section) {
-        this.section = section;
     }
 }

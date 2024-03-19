@@ -1,15 +1,11 @@
 package com.yangyoung.server.section.service;
 
-import com.yangyoung.server.exception.ErrorCode;
-import com.yangyoung.server.exception.MyException;
 import com.yangyoung.server.lecture.dto.response.LectureAllResponse;
 import com.yangyoung.server.lecture.service.LectureService;
 import com.yangyoung.server.section.domain.Section;
 import com.yangyoung.server.section.domain.SectionRepository;
 import com.yangyoung.server.section.dto.request.SectionCreateRequest;
 import com.yangyoung.server.section.dto.response.*;
-import com.yangyoung.server.sectionLecture.domain.SectionLecture;
-import com.yangyoung.server.sectionLecture.domain.SectionLectureRepository;
 import com.yangyoung.server.sectionTask.dto.response.SectionTaskAllResponse;
 import com.yangyoung.server.student.dto.response.StudentAllResponse;
 import com.yangyoung.server.student.service.StudentService;
@@ -20,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -68,7 +63,7 @@ public class SectionService {
     // 반 삭제
     @Transactional
     public void deleteSection(Long sectionId) {
-        Section section = sectionSubService.isSectionExist(sectionId);
+        Section section = sectionSubService.findSectionBySectionId(sectionId);
         sectionRepository.delete(section);
     }
 }

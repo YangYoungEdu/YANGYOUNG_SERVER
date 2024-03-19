@@ -14,8 +14,6 @@ public class StudentAllResponse {
 
     private List<StudentResponse> studentResponseList;
 
-    private List<SectionBriefResponse> sectionList;
-
     private List<String> gradeList;
 
     private List<String> schoolList;

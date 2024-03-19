@@ -68,7 +68,7 @@ public class LectureSubService {
     // 반 할당
     public String assignLectureToSection(Long sectionId, Lecture lecture) {
 
-        Section section = sectionSubService.isSectionExist(sectionId);
+        Section section = sectionSubService.findSectionBySectionId(sectionId);
 
         SectionLecture sectionLecture = SectionLecture.builder()
                 .section(section)

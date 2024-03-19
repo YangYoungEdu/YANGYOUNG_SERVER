@@ -1,17 +1,14 @@
 package com.yangyoung.server.student.dto.response;
 
-import com.yangyoung.server.student.domain.Grade;
 import com.yangyoung.server.student.domain.Student;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudentResponse {
+public class StudentBriefResponse {
 
     private Long id;
 
@@ -25,7 +22,8 @@ public class StudentResponse {
 
     private String parentPhoneNumber;
 
-    public StudentResponse(Student student) {
+
+    public StudentBriefResponse(Student student) {
         this.id = student.getId();
         this.name = student.getName();
         this.school = student.getSchool();
