@@ -1,0 +1,61 @@
+package com.yangyoung.server.lecture.domain;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.yangyoung.server.attendance.domain.Attendance;
+import com.yangyoung.server.configuration.BaseEntity;
+import com.yangyoung.server.lectureDay.domain.LectureDay;
+import com.yangyoung.server.lectureMaterial.domain.LectureMaterial;
+import com.yangyoung.server.sectionLecture.domain.SectionLecture;
+import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalTime;
+import java.util.List;
+
+@Entity
+@Getter
+@NoArgsConstructor
+public class Lecture extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+
+    private String teacher;
+
+    @OneToMany(mappedBy = "lecture", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<LectureDay> dayList;
+
+    private LocalTime startTime;
+
+    private LocalTime endTime;
+
+    private String room;
+
+    @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonBackReference
+    private List<SectionLecture> sectionLectureList;
+
+    @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonBackReference
+    private List<LectureMaterial> lectureMaterialList;
+
+    @Builder
+    public Lecture(String name, String teacher, LocalTime startTime, LocalTime endTime, String room, List<SectionLecture> sectionLectureList) {
+        this.name = name;
+        this.teacher = teacher;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.room = room;
+        this.sectionLectureList = sectionLectureList;
+    }
+
+    public void updateLectureDay(List<LectureDay> dayList) {
+        this.dayList = dayList;
+    }
+}
+

@@ -1,0 +1,40 @@
+package com.yangyoung.server.lecture.dto.request;
+
+import com.yangyoung.server.day.domain.Day;
+import com.yangyoung.server.lecture.domain.Lecture;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalTime;
+import java.util.List;
+
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class LectureCreateRequest {
+
+    private String name;
+
+    private String teacher;
+
+    private List<String> dayList;
+
+    private LocalTime startTime;
+
+    private LocalTime endTime;
+
+    private String room;
+
+    private Long sectionId;
+
+    public Lecture toEntity() {
+        return Lecture.builder()
+                .name(name)
+                .teacher(teacher)
+                .startTime(startTime)
+                .endTime(endTime)
+                .room(room)
+                .build();
+    }
+}

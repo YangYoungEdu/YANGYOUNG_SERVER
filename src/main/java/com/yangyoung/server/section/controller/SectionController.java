@@ -1,0 +1,61 @@
+package com.yangyoung.server.section.controller;
+
+import com.yangyoung.server.section.dto.request.SectionCreateRequest;
+import com.yangyoung.server.section.dto.response.*;
+import com.yangyoung.server.section.service.SectionService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/v0/section")
+public class SectionController {
+
+    private final SectionService sectionService;
+
+    // 반 생성 컨트롤러
+    @PostMapping("")
+    public ResponseEntity<SectionResponse> postSection(@RequestBody final SectionCreateRequest request) {
+
+        final SectionResponse response = sectionService.createSection(request);
+
+        return ResponseEntity.ok()
+                .body(response);
+    }
+
+    // 전체 반 정보 조회
+    @GetMapping("")
+    public ResponseEntity<SectionAllResponse> getAllSections() {
+
+        final SectionAllResponse response = sectionService.readAllSections();
+
+        return ResponseEntity.ok()
+                .body(response);
+
+    }
+
+    // 반 상세 조회
+    @GetMapping("/{sectionId}")
+    public ResponseEntity<SectionDetailResponse> getOneSection(@PathVariable final Long sectionId) {
+
+        final SectionDetailResponse response = sectionService.readSectionLecture(sectionId);
+
+        return ResponseEntity.ok()
+                .body(response);
+
+    }
+
+    // 반 삭제
+    @DeleteMapping("/{sectionId}")
+    public ResponseEntity<Void> deleteSection(@PathVariable final Long sectionId) {
+
+        sectionService.deleteSection(sectionId);
+
+        return ResponseEntity.noContent().build();
+    }
+}

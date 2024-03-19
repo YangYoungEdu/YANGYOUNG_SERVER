@@ -1,0 +1,6 @@
+springdoc:
+  swagger-ui:
+    path: /
+spring:
+  profiles:
+    include: db, s3
