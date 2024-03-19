@@ -91,4 +91,11 @@ public class StudentSubService {
                 student.getParentPhoneNumber()
         );
     }
+
+    // 반 id로 학생 엔티티 조회
+    public List<Student> getStudentsBySectionId(Long sectionId) {
+        return studentSectionRepository.findAllBySectionId(sectionId).stream()
+                .map(StudentSection::getStudent)
+                .toList();
+    }
 }

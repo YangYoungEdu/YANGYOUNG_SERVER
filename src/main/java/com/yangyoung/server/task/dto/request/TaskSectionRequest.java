@@ -5,16 +5,23 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class TaskSectionRequest {
 
-    private String assignment;
+    private String content;
+
+    private LocalDate taskDate;
 
     private Long sectionId;
 
     public Task toEntity() {
-        return Task.builder().assignment(assignment).build();
+        return Task.builder().
+                content(content).
+                taskDate(taskDate).
+                build();
     }
 }

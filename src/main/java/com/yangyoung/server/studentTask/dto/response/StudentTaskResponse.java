@@ -1,10 +1,10 @@
 package com.yangyoung.server.studentTask.dto.response;
 
-import com.yangyoung.server.studentTask.domain.TaskProgress;
-import com.yangyoung.server.task.domain.Task;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor
@@ -13,7 +13,9 @@ public class StudentTaskResponse {
 
     private Long id;
 
-    private String taskName;
+    private String content;
+
+    private LocalDate taskDate;
 
     private String taskProgress;
 }

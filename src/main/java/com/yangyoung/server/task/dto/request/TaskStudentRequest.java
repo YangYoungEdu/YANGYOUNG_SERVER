@@ -5,16 +5,23 @@ import jakarta.annotation.security.DenyAll;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Getter
 @NoArgsConstructor
 @DenyAll
 public class TaskStudentRequest {
 
-    private String assignment;
-
     private Long studentId;
 
+    private String content;
+
+    private LocalDate taskDate;
+
     public Task toEntity() {
-        return Task.builder().assignment(assignment).build();
+        return Task.builder().
+                content(content).
+                taskDate(taskDate).
+                build();
     }
 }
