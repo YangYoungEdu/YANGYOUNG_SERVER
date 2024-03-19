@@ -28,6 +28,7 @@ public class LectureController {
 
     }
 
+    // 전체 강의 조회 컨트롤러
     @GetMapping("")
     public ResponseEntity<LectureAllResponse> getAllLectures() {
 
@@ -38,6 +39,7 @@ public class LectureController {
 
     }
 
+    // 반 별 강의 조회 컨트롤러
     @GetMapping("/{lectureId}")
     public ResponseEntity<LectureResponse> getOneLecture(@PathVariable final Long lectureId) {
 

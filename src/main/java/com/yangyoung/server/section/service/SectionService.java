@@ -54,7 +54,7 @@ public class SectionService {
     public SectionDetailResponse readSectionLecture(Long sectionId) {
 
         SectionResponse sectionResponse = sectionSubService.readSectionInfo(sectionId);
-        LectureAllResponse lectureAllResponse = lectureService.getAllLecturesBySection(sectionId);
+        LectureAllResponse lectureAllResponse = lectureService.getLecturesBySection(sectionId);
         StudentAllResponse studentAllResponse = studentService.getAllStudentsBySection(sectionId);
         SectionTaskAllResponse sectionTaskAllResponse = taskService.readTaskBySection(sectionId);
         return new SectionDetailResponse(sectionResponse, lectureAllResponse, studentAllResponse, sectionTaskAllResponse);

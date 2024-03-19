@@ -8,6 +8,8 @@ import com.yangyoung.server.lecture.dto.request.LectureCreateRequest;
 import com.yangyoung.server.lecture.dto.response.LectureAllResponse;
 import com.yangyoung.server.lecture.dto.response.LectureResponse;
 import com.yangyoung.server.lecture.dto.response.LecturePostResponse;
+import com.yangyoung.server.section.domain.Section;
+import com.yangyoung.server.section.service.SectionSubService;
 import com.yangyoung.server.sectionLecture.domain.SectionLecture;
 import com.yangyoung.server.sectionLecture.domain.SectionLectureRepository;
 import jakarta.transaction.Transactional;
@@ -25,7 +27,9 @@ public class LectureService {
 
     private final LectureRepository lectureRepository;
     private final SectionLectureRepository sectionLectureRepository;
+
     private final LectureSubService lectureSubService;
+    private final SectionSubService sectionSubService;
 
     // 강의 등록(이름 중복 확인 + 정보 생성 + 요일 할당 + 반 할당)
     @Transactional
@@ -34,7 +38,7 @@ public class LectureService {
         lectureSubService.isExistLectureByName(request.getName());
         Lecture lecture = lectureSubService.createLectureInfo(request);
         lectureSubService.assignDayToLecture(lecture, request.getDayList());
-        String sectionName = lectureSubService.assignLectureToSection(request.getSectionId(), lecture);
+        List<String> sectionName = lectureSubService.assignLectureToSection(request.getSectionIdList(), lecture);
 
         return new LecturePostResponse(lecture, sectionName);
     }
@@ -44,19 +48,17 @@ public class LectureService {
     public LectureAllResponse getAllLectures() {
 
         List<Lecture> lectureList = lectureRepository.findAll();
-        log.info("lectureList: " + lectureList.size());
         List<LectureResponse> lectureResponseList
                 = lectureList.stream()
                 .map(LectureResponse::new)
                 .collect(Collectors.toList());
 
         return new LectureAllResponse(lectureResponseList, lectureResponseList.size());
-
     }
 
     // 반 별 강의 조회
     @Transactional
-    public LectureAllResponse getAllLecturesBySection(Long sectionId) {
+    public LectureAllResponse getLecturesBySection(Long sectionId) {
         List<Lecture> lectureList = lectureSubService.getLecturesBySection(sectionId);
 
         return lectureSubService.buildLectureAllResponse(lectureList);

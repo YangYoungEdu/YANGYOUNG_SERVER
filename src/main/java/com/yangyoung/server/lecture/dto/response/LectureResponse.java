@@ -27,7 +27,7 @@ public class LectureResponse {
 
     private String room;
 
-    private String sectionName;
+    private List<String> sectionName;
 
     public LectureResponse(Lecture lecture) {
         this.id = lecture.getId();
@@ -38,7 +38,9 @@ public class LectureResponse {
                 toList();
         this.startTime = lecture.getStartTime();
         this.endTime = lecture.getEndTime();
-        this.room = lecture.getRoom();
-        this.sectionName = lecture.getSectionLectureList().get(0).getSection().getName();
+        this.room = lecture.getLectureRoom();
+        this.sectionName = lecture.getSectionLectureList().stream()
+                .map(sectionLecture -> sectionLecture.getSection().getName())
+                .toList();
     }
 }

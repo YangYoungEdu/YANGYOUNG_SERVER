@@ -16,6 +16,7 @@ import com.yangyoung.server.section.service.SectionSubService;
 import com.yangyoung.server.sectionLecture.domain.SectionLecture;
 import com.yangyoung.server.sectionLecture.domain.SectionLectureRepository;
 import com.yangyoung.server.util.UtilService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -66,17 +67,20 @@ public class LectureSubService {
     }
 
     // 반 할당
-    public String assignLectureToSection(Long sectionId, Lecture lecture) {
+    public List<String> assignLectureToSection(List<Long> sectionId, Lecture lecture) {
 
-        Section section = sectionSubService.findSectionBySectionId(sectionId);
+        List<Section> section = sectionSubService.findSectionsBySectionIdList(sectionId);
+        List<SectionLecture> sectionLectureList = section.stream()
+                .map(section1 -> SectionLecture.builder()
+                        .section(section1)
+                        .lecture(lecture)
+                        .build())
+                .toList();
+        sectionLectureRepository.saveAll(sectionLectureList);
 
-        SectionLecture sectionLecture = SectionLecture.builder()
-                .section(section)
-                .lecture(lecture)
-                .build();
-        sectionLectureRepository.save(sectionLecture);
-
-        return section.getName();
+        return section.stream()
+                .map(Section::getName)
+                .collect(Collectors.toList());
     }
 
     // 반 별 강의 엔티티 조회
@@ -104,5 +108,18 @@ public class LectureSubService {
         return lectureAllResponse.getLectureResponseList().stream()
                 .filter(lecture -> lecture.getDayList().contains(today))
                 .toList();
+    }
+
+    // 학생별 강의 조회
+    @Transactional
+    public LectureAllResponse getLecturesByStudent(Long studentId) {
+
+        List<Section> sectionList = sectionSubService.findSectionsByStudentId(studentId);
+        List<Lecture> lectureList = sectionList.stream()
+                .map(section -> getLecturesBySection(section.getId()))
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+
+        return buildLectureAllResponse(lectureList);
     }
 }

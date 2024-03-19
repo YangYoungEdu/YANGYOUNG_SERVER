@@ -71,12 +71,12 @@ public class StudentService {
 
         StudentResponse studentResponse = studentSubService.getStudentInfo(studentId);
         SectionAllBriefResponse sectionAllBriefResponse = sectionSubService.findSectionsBriefInfo(studentId);
-//        LectureAllResponse lectureAllResponse = lectureService.getAllLecturesBySection(studentResponse.getSectionId());
+        LectureAllResponse lectureAllResponse = lectureSubService.getLecturesByStudent(studentId);
 
         return new StudentDetailResponse(
                 studentResponse,
                 sectionAllBriefResponse,
-                null);
+                lectureAllResponse);
     }
 
     // 학생 오늘 일정 조회(인적 사항 + 오늘 수강 강의 + 과제)

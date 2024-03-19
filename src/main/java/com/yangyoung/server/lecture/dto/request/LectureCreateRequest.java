@@ -1,6 +1,5 @@
 package com.yangyoung.server.lecture.dto.request;
 
-import com.yangyoung.server.day.domain.Day;
 import com.yangyoung.server.lecture.domain.Lecture;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,9 +23,11 @@ public class LectureCreateRequest {
 
     private LocalTime endTime;
 
-    private String room;
+    private String homeRoom;
 
-    private Long sectionId;
+    private String lectureRoom;
+
+    private List<Long> sectionIdList;
 
     public Lecture toEntity() {
         return Lecture.builder()
@@ -34,7 +35,8 @@ public class LectureCreateRequest {
                 .teacher(teacher)
                 .startTime(startTime)
                 .endTime(endTime)
-                .room(room)
+                .homeRoom(homeRoom)
+                .lectureRoom(lectureRoom)
                 .build();
     }
 }

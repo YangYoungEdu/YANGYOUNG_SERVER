@@ -1,6 +1,5 @@
 package com.yangyoung.server.lecture.dto.response;
 
-import com.yangyoung.server.day.domain.Day;
 import com.yangyoung.server.lecture.domain.Lecture;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,9 +25,9 @@ public class LecturePostResponse {
 
     private String room;
 
-    private String sectionName;
+    private List<String> sectionNameList;
 
-    public LecturePostResponse(Lecture lecture, String sectionName) {
+    public LecturePostResponse(Lecture lecture, List<String> sectionNameList) {
         this.id = lecture.getId();
         this.name = lecture.getName();
         this.dayList = lecture.getDayList().stream().
@@ -36,8 +35,8 @@ public class LecturePostResponse {
                 toList();
         this.startTime = lecture.getStartTime();
         this.endTime = lecture.getEndTime();
-        this.room = lecture.getRoom();
-        this.sectionName = sectionName;
+        this.room = lecture.getLectureRoom();
+        this.sectionNameList = sectionNameList;
     }
 
 }

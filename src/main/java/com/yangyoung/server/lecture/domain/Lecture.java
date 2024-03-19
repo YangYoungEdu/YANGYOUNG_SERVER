@@ -1,7 +1,6 @@
 package com.yangyoung.server.lecture.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.yangyoung.server.attendance.domain.Attendance;
 import com.yangyoung.server.configuration.BaseEntity;
 import com.yangyoung.server.lectureDay.domain.LectureDay;
 import com.yangyoung.server.lectureMaterial.domain.LectureMaterial;
@@ -34,7 +33,9 @@ public class Lecture extends BaseEntity {
 
     private LocalTime endTime;
 
-    private String room;
+    private String homeRoom;
+
+    private String lectureRoom;
 
     @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonBackReference
@@ -45,12 +46,13 @@ public class Lecture extends BaseEntity {
     private List<LectureMaterial> lectureMaterialList;
 
     @Builder
-    public Lecture(String name, String teacher, LocalTime startTime, LocalTime endTime, String room, List<SectionLecture> sectionLectureList) {
+    public Lecture(String name, String teacher, LocalTime startTime, LocalTime endTime, String homeRoom, String lectureRoom, List<SectionLecture> sectionLectureList) {
         this.name = name;
         this.teacher = teacher;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.room = room;
+        this.homeRoom = homeRoom;
+        this.lectureRoom = lectureRoom;
         this.sectionLectureList = sectionLectureList;
     }
 
