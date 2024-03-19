@@ -166,20 +166,19 @@ public class AttendanceService {
         LocalDateTime endDateTime = targetDate.atTime(23, 59, 59);
 
         List<Attendance> attendanceList = attendanceRepository.findBySectionIdAndAttendedDateTimeBetween(sectionId, startDateTime, endDateTime);
-        List<Student> studentList = null;
-//        List<Student> studentList = studentRepository.findBySectionId(sectionId);
+        List<Student> studentList = studentSubService.getStudentsBySectionId(sectionId);
         List<AttendanceResponse> attendanceResponseList = new ArrayList<>();
-        for (int i = 0; i < studentList.size(); i++) {
-            Optional<Attendance> attendance = attendanceRepository.findByStudentIdAndAttendedDateTimeBetween(studentList.get(i).getId(), startDateTime, endDateTime);
+        for (Student student : studentList) {
+            Optional<Attendance> attendance = attendanceRepository.findByStudentIdAndAttendedDateTimeBetween(student.getId(), startDateTime, endDateTime);
             AttendanceResponse attendanceResponse = new AttendanceResponse();
             if (attendance.isEmpty()) {
                 attendanceResponse = new AttendanceResponse(
                         startDateTime,
-                        studentList.get(i).getId(),
-                        studentList.get(i).getName(),
+                        student.getId(),
+                        student.getName(),
                         section.getName(),
-                        studentList.get(i).getStudentPhoneNumber(),
-                        studentList.get(i).getParentPhoneNumber(),
+                        student.getStudentPhoneNumber(),
+                        student.getParentPhoneNumber(),
                         null,
                         " ");
             }
@@ -187,11 +186,11 @@ public class AttendanceService {
             if (attendance.isPresent()) {
                 attendanceResponse = new AttendanceResponse(
                         attendance.get().getAttendedDateTime(),
-                        studentList.get(i).getId(),
-                        studentList.get(i).getName(),
+                        student.getId(),
+                        student.getName(),
                         section.getName(),
-                        studentList.get(i).getStudentPhoneNumber(),
-                        studentList.get(i).getParentPhoneNumber(),
+                        student.getStudentPhoneNumber(),
+                        student.getParentPhoneNumber(),
                         attendance.get().getAttendanceType(),
                         attendance.get().getNote());
             }
