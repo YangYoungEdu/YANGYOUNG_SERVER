@@ -19,12 +19,12 @@ public class TaskPostResponse {
     private String studentName;
 
     public TaskPostResponse(Task task, Section section) {
-        this.assignment = task.getAssignment();
+        this.assignment = task.getContent();
         this.sectionName = section.getName();
     }
 
     public TaskPostResponse(Task task, Student student) {
-        this.assignment = task.getAssignment();
+        this.assignment = task.getContent();
         this.studentName = student.getName();
     }
 }

@@ -1,16 +1,15 @@
 package com.yangyoung.server.task.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.yangyoung.server.configuration.BaseEntity;
 import com.yangyoung.server.sectionTask.domain.SectionTask;
 import com.yangyoung.server.studentTask.domain.StudentTask;
-import com.yangyoung.server.studentTask.domain.TaskProgress;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -22,18 +21,26 @@ public class Task extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String assignment;
+    private String content;
 
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
+    private LocalDate taskDate;
+
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
     private List<StudentTask> studentTaskList;
 
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
     private List<SectionTask> sectionTaskList;
 
     @Builder
-    public Task(String assignment) {
-        this.assignment = assignment;
+    public Task(String content, LocalDate taskDate) {
+        this.content = content;
+        this.taskDate = taskDate;
+    }
+
+    public void updateTask(String content, LocalDate taskDate) {
+        this.content = content;
+        this.taskDate = taskDate;
     }
 }

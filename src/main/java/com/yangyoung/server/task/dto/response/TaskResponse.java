@@ -1,10 +1,11 @@
 package com.yangyoung.server.task.dto.response;
 
-import com.yangyoung.server.studentTask.domain.TaskProgress;
 import com.yangyoung.server.task.domain.Task;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor
@@ -13,10 +14,13 @@ public class TaskResponse {
 
     private Long id;
 
-    private String assignment;
+    private String content;
+
+    private LocalDate taskDate;
 
     public TaskResponse(Task task) {
         this.id = task.getId();
-        this.assignment = task.getAssignment();
+        this.content = task.getContent();
+        this.taskDate = task.getTaskDate();
     }
 }
