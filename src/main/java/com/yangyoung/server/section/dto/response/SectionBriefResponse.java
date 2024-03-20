@@ -14,8 +14,11 @@ public class SectionBriefResponse {
 
     private String name;
 
+    private String teacher;
+
     public SectionBriefResponse(Section section) {
         this.id = section.getId();
         this.name = section.getName();
+        this.teacher = section.getTeacher();
     }
 }

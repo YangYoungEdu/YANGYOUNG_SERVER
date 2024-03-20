@@ -58,8 +58,7 @@ public class SectionSubService {
         List<StudentSection> studentSectionList = studentSectionRepository.findAllByStudentId(studentId);
         List<SectionBriefResponse> sectionBriefResponseList = studentSectionList.stream()
                 .map(studentSection -> new SectionBriefResponse(
-                        studentSection.getSection().getId(),
-                        studentSection.getSection().getName()))
+                        studentSection.getSection()))
                 .toList();
 
         return new SectionAllBriefResponse(sectionBriefResponseList, sectionBriefResponseList.size());

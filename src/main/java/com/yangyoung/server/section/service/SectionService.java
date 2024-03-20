@@ -5,6 +5,7 @@ import com.yangyoung.server.lecture.service.LectureService;
 import com.yangyoung.server.section.domain.Section;
 import com.yangyoung.server.section.domain.SectionRepository;
 import com.yangyoung.server.section.dto.request.SectionCreateRequest;
+import com.yangyoung.server.section.dto.request.SectionStudentChangeRequest;
 import com.yangyoung.server.section.dto.response.*;
 import com.yangyoung.server.sectionTask.dto.response.SectionTaskAllResponse;
 import com.yangyoung.server.student.dto.response.StudentAllResponse;
@@ -66,4 +67,5 @@ public class SectionService {
         Section section = sectionSubService.findSectionBySectionId(sectionId);
         sectionRepository.delete(section);
     }
+
 }
