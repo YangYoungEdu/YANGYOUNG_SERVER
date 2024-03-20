@@ -71,5 +71,13 @@ public class SectionSubService {
                 .map(StudentSection::getSection)
                 .toList();
     }
+
+    // 학생이 속한 반 이름 리스트 조회
+    public List<String> findSectionNamesByStudentId(Long studentId) {
+        List<StudentSection> studentSectionList = studentSectionRepository.findAllByStudentId(studentId);
+        return studentSectionList.stream()
+                .map(studentSection -> studentSection.getSection().getName())
+                .collect(Collectors.toList());
+    }
 }
 

@@ -46,7 +46,9 @@ public class StudentService {
 
         studentSubService.assignStudentToSection(student, request.getSectionIdList());
 
-        return new StudentResponse(student);
+        List<String> sectionNameList = sectionSubService.findSectionNamesByStudentId(student.getId());
+
+        return new StudentResponse(student, sectionNameList);
     }
 
     // 학생 전체 조회(인적 사항 + 검색 옵션)
@@ -130,14 +132,9 @@ public class StudentService {
         );
         studentRepository.save(student);
 
-//        List<StudentSection> studentSectionList = studentSectionRepository.findAllByStudentId(request.getStudentId());
-//        for (int i = 0; i < request.getSectionIdList().size(); i++) {
-//            Section section = sectionSubService.findSectionBySectionId(request.getSectionIdList().get(i));
-//            studentSectionList.get(i).updateSection(section);
-//        }
-//        studentSectionRepository.saveAll(studentSectionList);
+        List<String> sectionNameList = sectionSubService.findSectionNamesByStudentId(request.getStudentId());
 
-        return new StudentResponse(student);
+        return new StudentResponse(student, sectionNameList);
     }
 
 
@@ -151,6 +148,8 @@ public class StudentService {
         List<StudentSection> studentSectionList = studentSectionRepository.findAllByStudentId(studentId);
         studentSectionRepository.deleteAll(studentSectionList);
 
-        return new StudentResponse(student);
+        List<String> sectionNameList = sectionSubService.findSectionNamesByStudentId(studentId);
+
+        return new StudentResponse(student, sectionNameList);
     }
 }

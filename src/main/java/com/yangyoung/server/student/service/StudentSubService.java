@@ -13,6 +13,7 @@ import com.yangyoung.server.studentSection.domain.StudentSectionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -71,10 +72,14 @@ public class StudentSubService {
     // 학생 전체 인적 사항 조회
     public List<StudentResponse> readAllStudentInfo(List<Student> studentList) {
 
-        return studentList.stream()
-                .map(student -> getStudentInfo(student.getId()))
-                .filter(Objects::nonNull)
-                .toList();
+        List<StudentResponse> studentResponseList = new ArrayList<>();
+        for (Student student : studentList) {
+            List<String> sectionNameList = sectionSubService.findSectionNamesByStudentId(student.getId());
+            StudentResponse studentResponse = new StudentResponse(student, sectionNameList);
+            studentResponseList.add(studentResponse);
+        }
+
+        return studentResponseList;
     }
 
     // 학생 인적 사항 조회
@@ -83,13 +88,9 @@ public class StudentSubService {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new MyException(ErrorCode.STUDENT_NOT_FOUND));
 
-        return new StudentResponse(student.getId(),
-                student.getName(),
-                student.getSchool(),
-                student.getGrade().getGradeName(),
-                student.getStudentPhoneNumber(),
-                student.getParentPhoneNumber()
-        );
+        List<String> sectionNameList = sectionSubService.findSectionNamesByStudentId(studentId);
+
+        return new StudentResponse(student, sectionNameList);
     }
 
     // 반 id로 학생 엔티티 조회
