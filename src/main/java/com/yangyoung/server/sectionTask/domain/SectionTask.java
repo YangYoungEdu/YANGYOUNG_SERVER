@@ -4,6 +4,7 @@ import com.yangyoung.server.section.domain.Section;
 import com.yangyoung.server.student.domain.Student;
 import com.yangyoung.server.studentTask.domain.TaskProgress;
 import com.yangyoung.server.task.domain.Task;
+import com.yangyoung.server.task.domain.TaskType;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,12 +29,13 @@ public class SectionTask {
     private Task task;
 
     @Enumerated(EnumType.STRING)
-    private TaskProgress taskProgress;
+    private TaskType taskType;
+
 
     @Builder
-    public SectionTask(Section section, Task task, TaskProgress taskProgress) {
+    public SectionTask(Section section, Task task, TaskType taskType) {
         this.section = section;
         this.task = task;
-        this.taskProgress = taskProgress;
+        this.taskType = taskType;
     }
 }

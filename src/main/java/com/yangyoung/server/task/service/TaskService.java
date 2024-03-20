@@ -17,6 +17,7 @@ import com.yangyoung.server.studentTask.dto.response.StudentTaskAllResponse;
 import com.yangyoung.server.studentTask.dto.response.StudentTaskResponse;
 import com.yangyoung.server.task.domain.Task;
 import com.yangyoung.server.task.domain.TaskRepository;
+import com.yangyoung.server.task.domain.TaskType;
 import com.yangyoung.server.task.dto.request.TaskSectionRequest;
 import com.yangyoung.server.task.dto.request.TaskStudentRequest;
 import com.yangyoung.server.task.dto.request.TaskProgressUpdateRequest;
@@ -35,6 +36,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class TaskService {
+
+    private final TaskType STUDENT = TaskType.STUDENT;
+    private final TaskType SECTION = TaskType.SECTION;
 
     private final TaskRepository taskRepository;
     private final StudentTaskRepository studentTaskRepository;
@@ -88,7 +92,7 @@ public class TaskService {
         SectionTask sectionTask = SectionTask.builder().
                 section(section).
                 task(task).
-                taskProgress(TaskProgress.NOT_STARTED).
+                taskType(SECTION).
                 build();
         sectionTaskRepository.save(sectionTask);
 
@@ -96,7 +100,8 @@ public class TaskService {
         List<Student> studentList = studentSubService.getStudentsBySectionId(request.getSectionId());
         List<StudentTask> studentTaskList = new ArrayList<>();
         for (Student student : studentList) {
-            StudentTask studentTask = new StudentTask(student, task, TaskProgress.NOT_STARTED);
+            StudentTask studentTask = new StudentTask(
+                    student, task, TaskProgress.NOT_STARTED, STUDENT);
             studentTaskList.add(studentTask);
         }
         studentTaskRepository.saveAll(studentTaskList);

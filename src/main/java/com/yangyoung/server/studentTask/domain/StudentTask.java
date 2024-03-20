@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.yangyoung.server.configuration.BaseEntity;
 import com.yangyoung.server.student.domain.Student;
 import com.yangyoung.server.task.domain.Task;
+import com.yangyoung.server.task.domain.TaskType;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,11 +32,15 @@ public class StudentTask extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private TaskProgress taskProgress;
 
+    @Enumerated(EnumType.STRING)
+    private TaskType taskType;
+
     @Builder
-    public StudentTask(Student student, Task task, TaskProgress taskProgress) {
+    public StudentTask(Student student, Task task, TaskProgress taskProgress, TaskType taskType) {
         this.student = student;
         this.task = task;
         this.taskProgress = taskProgress;
+        this.taskType = taskType;
     }
 
     public void updateTaskProgress(TaskProgress taskProgress) {
