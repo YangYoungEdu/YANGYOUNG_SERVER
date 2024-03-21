@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -83,10 +84,10 @@ public class TaskController {
     }
 
     // 과제 삭제
-    @DeleteMapping("/{taskId}")
-    public ResponseEntity<Void> deleteTask(@PathVariable Long taskId) {
+    @DeleteMapping("")
+    public ResponseEntity<Void> deleteTask(@RequestParam List<Long> taskIdList) {
 
-        taskService.deleteTask(taskId);
+        taskService.deleteTask(taskIdList);
 
         return ResponseEntity.noContent().build();
     }

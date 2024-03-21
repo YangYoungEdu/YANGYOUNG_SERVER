@@ -18,4 +18,6 @@ public class StudentTaskResponse {
     private LocalDate taskDate;
 
     private String taskProgress;
+
+    private String taskType;
 }

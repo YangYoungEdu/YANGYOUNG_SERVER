@@ -32,15 +32,12 @@ public class StudentTask extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private TaskProgress taskProgress;
 
-    @Enumerated(EnumType.STRING)
-    private TaskType taskType;
 
     @Builder
-    public StudentTask(Student student, Task task, TaskProgress taskProgress, TaskType taskType) {
+    public StudentTask(Student student, Task task, TaskProgress taskProgress) {
         this.student = student;
         this.task = task;
         this.taskProgress = taskProgress;
-        this.taskType = taskType;
     }
 
     public void updateTaskProgress(TaskProgress taskProgress) {

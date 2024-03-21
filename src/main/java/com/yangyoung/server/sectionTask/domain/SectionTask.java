@@ -28,14 +28,9 @@ public class SectionTask {
     @JoinColumn(name = "task_id")
     private Task task;
 
-    @Enumerated(EnumType.STRING)
-    private TaskType taskType;
-
-
     @Builder
-    public SectionTask(Section section, Task task, TaskType taskType) {
+    public SectionTask(Section section, Task task) {
         this.section = section;
         this.task = task;
-        this.taskType = taskType;
     }
 }

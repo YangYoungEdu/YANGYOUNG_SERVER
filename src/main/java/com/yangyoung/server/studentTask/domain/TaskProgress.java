@@ -5,9 +5,10 @@ import lombok.Getter;
 
 @Getter
 public enum TaskProgress {
-    NOT_STARTED(1, "NOT_STARTED"),
-    IN_PROGRESS(2, "IN_PROGRESS"),
-    COMPLETED(3, "COMPLETED");
+    NOT_STARTED(1, "미시작"),
+    IN_PROGRESS(2, "진행중"),
+    COMPLETED(3, "완료"),
+    ;
 
     private final int progressNumber;
     private final String progressName;

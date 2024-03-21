@@ -1,6 +1,7 @@
 package com.yangyoung.server.task.dto.request;
 
 import com.yangyoung.server.task.domain.Task;
+import com.yangyoung.server.task.domain.TaskType;
 import jakarta.annotation.security.DenyAll;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ public class TaskStudentRequest {
         return Task.builder().
                 content(content).
                 taskDate(taskDate).
+                taskType(TaskType.STUDENT).
                 build();
     }
 }

@@ -75,7 +75,8 @@ public class TaskService {
                         studentTask.getId(),
                         studentTask.getTask().getContent(),
                         studentTask.getTask().getTaskDate(),
-                        studentTask.getTaskProgress().getProgressName()))
+                        studentTask.getTaskProgress().getProgressName(),
+                        studentTask.getTask().getTaskType().getTypeName()))
                 .toList();
 
         return new StudentTaskAllResponse(taskResponseList, taskResponseList.size());
@@ -92,7 +93,6 @@ public class TaskService {
         SectionTask sectionTask = SectionTask.builder().
                 section(section).
                 task(task).
-                taskType(SECTION).
                 build();
         sectionTaskRepository.save(sectionTask);
 
@@ -101,7 +101,7 @@ public class TaskService {
         List<StudentTask> studentTaskList = new ArrayList<>();
         for (Student student : studentList) {
             StudentTask studentTask = new StudentTask(
-                    student, task, TaskProgress.NOT_STARTED, STUDENT);
+                    student, task, TaskProgress.NOT_STARTED);
             studentTaskList.add(studentTask);
         }
         studentTaskRepository.saveAll(studentTaskList);
@@ -143,7 +143,8 @@ public class TaskService {
                 studentTask.getId(),
                 studentTask.getTask().getContent(),
                 studentTask.getTask().getTaskDate(),
-                studentTask.getTaskProgress().getProgressName());
+                studentTask.getTaskProgress().getProgressName(),
+                studentTask.getTask().getTaskType().getTypeName());
     }
 
     // task 수정
@@ -157,15 +158,6 @@ public class TaskService {
         taskRepository.save(task);
     }
 
-    // task 삭제
-    @Transactional
-    public void deleteTask(Long taskId) {
-
-        Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new MyException(ErrorCode.TASK_NOT_FOUND));
-        taskRepository.delete(task);
-    }
-
     // 날짜별로 과제 조회 - 학생
     @Transactional
     public StudentTaskAllResponse getTasksByStudentAndDate(Long studentId, LocalDate taskDate) {
@@ -176,7 +168,8 @@ public class TaskService {
                         studentTask.getTask().getId(),
                         studentTask.getTask().getContent(),
                         studentTask.getTask().getTaskDate(),
-                        studentTask.getTaskProgress().getProgressName()))
+                        studentTask.getTaskProgress().getProgressName(),
+                        studentTask.getTask().getTaskType().getTypeName()))
                 .toList();
 
         return new StudentTaskAllResponse(taskResponseList, taskResponseList.size());
@@ -195,5 +188,11 @@ public class TaskService {
                 .toList();
 
         return new SectionTaskAllResponse(taskResponseList, taskResponseList.size());
+    }
+
+    // task 삭제
+    @Transactional
+    public void deleteTask(List<Long> taskIdList) {
+        taskRepository.deleteAllById(taskIdList);
     }
 }
