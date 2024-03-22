@@ -25,7 +25,9 @@ public class LectureResponse {
 
     private LocalTime endTime;
 
-    private String room;
+    private String homeRoom;
+
+    private String lectureRoom;
 
     private List<String> sectionName;
 
@@ -38,7 +40,8 @@ public class LectureResponse {
                 toList();
         this.startTime = lecture.getStartTime();
         this.endTime = lecture.getEndTime();
-        this.room = lecture.getLectureRoom();
+        this.homeRoom = lecture.getHomeRoom();
+        this.lectureRoom = lecture.getLectureRoom();
         this.sectionName = lecture.getSectionLectureList().stream()
                 .map(sectionLecture -> sectionLecture.getSection().getName())
                 .toList();

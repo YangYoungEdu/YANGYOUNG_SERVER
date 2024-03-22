@@ -2,6 +2,7 @@ package com.yangyoung.server.lecture.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.yangyoung.server.configuration.BaseEntity;
+import com.yangyoung.server.lectureDate.domain.LectureDate;
 import com.yangyoung.server.lectureDay.domain.LectureDay;
 import com.yangyoung.server.lectureMaterial.domain.LectureMaterial;
 import com.yangyoung.server.sectionLecture.domain.SectionLecture;
@@ -29,6 +30,9 @@ public class Lecture extends BaseEntity {
 
     @OneToMany(mappedBy = "lecture", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<LectureDay> dayList;
+
+    @OneToMany(mappedBy = "lecture", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<LectureDate> dateList;
 
     private LocalTime startTime;
 
