@@ -61,7 +61,7 @@ public class SectionController {
     }
 
     // 반 정보 수정
-    @PutMapping("")
+    @PatchMapping("")
     public ResponseEntity<SectionResponse> updateSection(@RequestBody final SectionUpdateRequest request) {
 
         final SectionResponse response = sectionService.updateSection(request);
