@@ -13,6 +13,9 @@ import com.yangyoung.server.student.dto.request.StudentUpdateRequest;
 import com.yangyoung.server.student.dto.response.*;
 import com.yangyoung.server.studentSection.domain.StudentSection;
 import com.yangyoung.server.studentSection.domain.StudentSectionRepository;
+import com.yangyoung.server.studentTask.dto.response.StudentTaskAllResponse;
+import com.yangyoung.server.task.service.TaskService;
+import com.yangyoung.server.task.service.TaskSubService;
 import com.yangyoung.server.util.UtilService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +38,7 @@ public class StudentService {
     private final StudentSubService studentSubService;
     private final SectionSubService sectionSubService;
     private final LectureSubService lectureSubService;
+    private final TaskService taskService;
     private final UtilService utilService;
 
     // 학생 추가(인적 사항 기입 + 반 할당)
@@ -95,11 +99,13 @@ public class StudentService {
         List<LectureResponse> lectureResponseList = lectureSubService.getTodayLectures(studentDetailResponse.getLectureAllResponse(), todayDayOfWeek);
         LectureAllResponse lectureAllResponse = new LectureAllResponse(lectureResponseList, lectureResponseList.size());
 
+        StudentTaskAllResponse studentTaskAllResponse = taskService.getTasksByStudentAndDate(studentId, today);
+
         return new TodayScheduleResponse(
                 today,
                 studentDetailResponse.getStudentResponse(),
                 lectureAllResponse,
-                null);
+                studentTaskAllResponse);
     }
 
     // 반 - 학생 정보 조회
