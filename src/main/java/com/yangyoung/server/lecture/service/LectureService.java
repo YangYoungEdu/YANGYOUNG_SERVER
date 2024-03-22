@@ -38,6 +38,7 @@ public class LectureService {
         lectureSubService.isExistLectureByName(request.getName());
         Lecture lecture = lectureSubService.createLectureInfo(request);
         lectureSubService.assignDayToLecture(lecture, request.getDayList());
+        lectureSubService.assignDateToLecture(lecture, request.getDateList());
         List<String> sectionName = lectureSubService.assignLectureToSection(request.getSectionIdList(), lecture);
 
         return new LecturePostResponse(lecture, sectionName);

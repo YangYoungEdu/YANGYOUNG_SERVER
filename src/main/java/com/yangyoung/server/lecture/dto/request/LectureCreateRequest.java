@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -18,6 +19,8 @@ public class LectureCreateRequest {
     private String teacher;
 
     private List<String> dayList;
+
+    private List<LocalDate> dateList;
 
     private LocalTime startTime;
 

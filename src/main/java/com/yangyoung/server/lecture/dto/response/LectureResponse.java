@@ -1,10 +1,12 @@
 package com.yangyoung.server.lecture.dto.response;
 
 import com.yangyoung.server.lecture.domain.Lecture;
+import com.yangyoung.server.lectureDate.domain.LectureDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -20,6 +22,8 @@ public class LectureResponse {
     private String name;
 
     private List<String> dayList;
+
+    private List<LocalDate> dateList;
 
     private LocalTime startTime;
 
@@ -38,6 +42,9 @@ public class LectureResponse {
         this.dayList = lecture.getDayList().stream().
                 map(lectureDay -> lectureDay.getDay().getDayName()).
                 toList();
+        this.dateList = lecture.getDateList().stream()
+                .map(LectureDate::getDate)
+                .toList();
         this.startTime = lecture.getStartTime();
         this.endTime = lecture.getEndTime();
         this.homeRoom = lecture.getHomeRoom();

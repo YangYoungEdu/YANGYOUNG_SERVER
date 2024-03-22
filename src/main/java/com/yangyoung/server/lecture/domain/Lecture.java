@@ -64,5 +64,9 @@ public class Lecture extends BaseEntity {
     public void updateLectureDay(List<LectureDay> dayList) {
         this.dayList = dayList;
     }
+
+    public void updateLectureDate(List<LectureDate> dateList) {
+        this.dateList = dateList;
+    }
 }
 

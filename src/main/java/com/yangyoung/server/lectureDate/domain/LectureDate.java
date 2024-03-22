@@ -2,6 +2,7 @@ package com.yangyoung.server.lectureDate.domain;
 
 import com.yangyoung.server.lecture.domain.Lecture;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,4 +23,10 @@ public class LectureDate {
     private Lecture lecture;
 
     private LocalDate date;
+
+    @Builder
+    public LectureDate(Lecture lecture, LocalDate date) {
+        this.lecture = lecture;
+        this.date = date;
+    }
 }

@@ -9,6 +9,8 @@ import com.yangyoung.server.lecture.domain.LectureRepository;
 import com.yangyoung.server.lecture.dto.request.LectureCreateRequest;
 import com.yangyoung.server.lecture.dto.response.LectureAllResponse;
 import com.yangyoung.server.lecture.dto.response.LectureResponse;
+import com.yangyoung.server.lectureDate.domain.LectureDate;
+import com.yangyoung.server.lectureDate.domain.LectureDateRepository;
 import com.yangyoung.server.lectureDay.domain.LectureDay;
 import com.yangyoung.server.lectureDay.domain.LectureDayRepository;
 import com.yangyoung.server.section.domain.Section;
@@ -22,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,6 +40,7 @@ public class LectureSubService {
     private final SectionLectureRepository sectionLectureRepository;
     private final DayRepository dayRepository;
     private final UtilService utilService;
+    private final LectureDateRepository lectureDateRepository;
 
     // 강의명으로 강의 존재 확인
     public void isExistLectureByName(String name) {
@@ -63,6 +67,18 @@ public class LectureSubService {
         lectureDayRepository.saveAll(lectureDayList);
 
         lecture.updateLectureDay(lectureDayList);
+        lectureRepository.save(lecture);
+    }
+
+    // 강의 날짜 할당
+    public void assignDateToLecture(Lecture lecture, List<LocalDate> dateList) {
+
+        List<LectureDate> lectureDateList = dateList.stream()
+                .map(date -> LectureDate.builder().date(date).lecture(lecture).build())
+                .collect(Collectors.toList());
+        lectureDateRepository.saveAll(lectureDateList);
+
+        lecture.updateLectureDate(lectureDateList);
         lectureRepository.save(lecture);
     }
 
