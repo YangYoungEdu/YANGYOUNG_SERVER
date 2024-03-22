@@ -28,17 +28,20 @@ public class SectionSubService {
 
 
     // id에 해당하는 반 정보 조회 - 단일
+    @Transactional
     public Section findSectionBySectionId(Long sectionId) {
         return sectionRepository.findById(sectionId)
                 .orElseThrow(() -> new MyException(ErrorCode.SECTION_NOT_FOUND));
     }
 
     // id에 해당하는 반 정보 조회 - 다중
+    @Transactional
     public List<Section> findSectionsBySectionIdList(List<Long> sectionIdList) {
         return sectionRepository.findAllById(sectionIdList);
     }
 
     // id에 해당하는 반 정보 조회
+    @Transactional
     public SectionResponse readSectionInfo(Long sectionId) {
 
         Optional<Section> section = sectionRepository.findById(sectionId);
@@ -50,6 +53,7 @@ public class SectionSubService {
     }
 
     // 학생이 속한 반의 정보 조회
+    @Transactional
     public SectionAllBriefResponse findSectionsBriefInfo(Long studentId) {
 
         List<StudentSection> studentSectionList = studentSectionRepository.findAllByStudentId(studentId);
@@ -62,6 +66,7 @@ public class SectionSubService {
     }
 
     // 학생이 속한 반의 엔티티 조회
+    @Transactional
     public List<Section> findSectionsByStudentId(Long studentId) {
         List<StudentSection> studentSectionList = studentSectionRepository.findAllByStudentId(studentId);
         return studentSectionList.stream()
@@ -70,6 +75,7 @@ public class SectionSubService {
     }
 
     // 학생이 속한 반 이름 리스트 조회
+    @Transactional
     public List<String> findSectionNamesByStudentId(Long studentId) {
         List<StudentSection> studentSectionList = studentSectionRepository.findAllByStudentId(studentId);
         return studentSectionList.stream()

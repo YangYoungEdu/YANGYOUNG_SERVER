@@ -64,12 +64,8 @@ Section extends BaseEntity {
     }
 
     public void update(String name, String teacher, String homeRoom) {
-        if (name != null && !name.isEmpty()) {
-            this.name = name;
-        }
-        if (teacher != null && !teacher.isEmpty())
-            this.teacher = teacher;
-        if (homeRoom != null && !homeRoom.isEmpty())
-            this.homeRoom = homeRoom;
+        this.name = name;
+        this.teacher = teacher;
+        this.homeRoom = homeRoom;
     }
 }

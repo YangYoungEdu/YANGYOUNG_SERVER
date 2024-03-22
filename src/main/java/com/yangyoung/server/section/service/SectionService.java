@@ -1,5 +1,7 @@
 package com.yangyoung.server.section.service;
 
+import com.yangyoung.server.exception.ErrorCode;
+import com.yangyoung.server.exception.MyException;
 import com.yangyoung.server.lecture.dto.response.LectureAllResponse;
 import com.yangyoung.server.lecture.service.LectureService;
 import com.yangyoung.server.section.domain.Section;
@@ -72,8 +74,13 @@ public class SectionService {
     // 반 정보 수정
     @Transactional
     public SectionResponse updateSection(SectionUpdateRequest request) {
-        Section section = sectionSubService.findSectionBySectionId(request.getSectionId());
+
+        Section section = sectionRepository.findById(request.getSectionId())
+                .orElseThrow(() -> new MyException(ErrorCode.SECTION_NOT_FOUND));
         section.update(request.getName(), request.getTeacher(), request.getHomeRoom());
+        log.info("update contetns: {} {} {}", section.getName(), section.getTeacher(), section.getHomeRoom());
+        sectionRepository.save(section);
+
         return new SectionResponse(section);
     }
 
