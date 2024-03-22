@@ -38,7 +38,6 @@ public class LectureCreateRequest {
                 .teacher(teacher)
                 .startTime(startTime)
                 .endTime(endTime)
-                .homeRoom(homeRoom)
                 .lectureRoom(lectureRoom)
                 .build();
     }
