@@ -128,23 +128,22 @@ public class TaskService {
 
     /* 과제 상태 변경 */
     @Transactional
-    public StudentTaskResponse updateTaskProgress(TaskProgressUpdateRequest request) {
+    public StudentTaskAllResponse updateTaskProgress(List<TaskProgressUpdateRequest> requestList) {
 
-        StudentTask studentTask = studentTaskRepository.findByStudentIdAndTaskId(request.getStudentId(), request.getTaskId());
-        if (studentTask == null) { /* id에 해당하는 학생과 과제가 존재하지 않는 경우 */
-            throw new MyException(ErrorCode.STUDENT_TASK_NOT_FOUND);
+        List<StudentTask> studentTaskList = requestList.stream()
+                .map(request -> studentTaskRepository.findByStudentIdAndTaskId(request.getStudentId(), request.getTaskId()))
+                .toList();
+
+        for (int i = 0; i < studentTaskList.size(); i++) {
+            studentTaskList.get(i).updateTaskProgress(requestList.get(i).getTaskProgress());
         }
+        studentTaskRepository.saveAll(studentTaskList);
 
-        log.info(request.getTaskProgress().toString());
-        studentTask.updateTaskProgress(request.getTaskProgress());
-        studentTaskRepository.save(studentTask);
+        List<StudentTaskResponse> taskResponseList = studentTaskList.stream()
+                .map(StudentTaskResponse::new)
+                .toList();
 
-        return new StudentTaskResponse(
-                studentTask.getId(),
-                studentTask.getTask().getContent(),
-                studentTask.getTask().getTaskDate(),
-                studentTask.getTaskProgress().getProgressName(),
-                studentTask.getTask().getTaskType().getTypeName());
+        return new StudentTaskAllResponse(taskResponseList, taskResponseList.size());
     }
 
     // task 수정

@@ -66,9 +66,9 @@ public class TaskController {
 
     /* 과제 상태 수정 */
     @PatchMapping("/progress")
-    public ResponseEntity<StudentTaskResponse> putTask(@RequestBody TaskProgressUpdateRequest request) {
+    public ResponseEntity<StudentTaskAllResponse> putTask(@RequestBody List<TaskProgressUpdateRequest> requestList) {
 
-        StudentTaskResponse response = taskService.updateTaskProgress(request);
+        StudentTaskAllResponse response = taskService.updateTaskProgress(requestList);
 
         return ResponseEntity.ok()
                 .body(response);
