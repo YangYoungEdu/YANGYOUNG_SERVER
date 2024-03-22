@@ -31,6 +31,8 @@ Section extends BaseEntity {
     @NotNull
     private String teacher;
 
+    private String homeRoom;
+
     @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonBackReference
     private List<StudentSection> studentSectionList;
@@ -48,10 +50,11 @@ Section extends BaseEntity {
     private List<SectionTask> sectionTaskList;
 
     @Builder
-    public Section(Long id, String name, String teacher) {
+    public Section(Long id, String name, String teacher, String homeRoom) {
         this.id = id;
         this.name = name;
         this.teacher = teacher;
+        this.homeRoom = homeRoom;
     }
 
     @Builder

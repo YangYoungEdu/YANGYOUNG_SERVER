@@ -12,10 +12,13 @@ public class SectionCreateRequest {
 
     private String teacher;
 
+    private String homeRoom;
+
     public Section toEntity() {
         return Section.builder()
                 .name(name)
                 .teacher(teacher)
+                .homeRoom(homeRoom)
                 .build();
     }
 }

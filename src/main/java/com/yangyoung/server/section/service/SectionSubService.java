@@ -46,10 +46,7 @@ public class SectionSubService {
             throw new MyException(ErrorCode.SECTION_NOT_FOUND);
         }
 
-        return new SectionResponse(
-                section.get().getId(),
-                section.get().getName(),
-                section.get().getTeacher());
+        return new SectionResponse(section.get());
     }
 
     // 학생이 속한 반의 정보 조회

@@ -38,8 +38,6 @@ public class Lecture extends BaseEntity {
 
     private LocalTime endTime;
 
-    private String homeRoom;
-
     private String lectureRoom;
 
     @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -51,12 +49,11 @@ public class Lecture extends BaseEntity {
     private List<LectureMaterial> lectureMaterialList;
 
     @Builder
-    public Lecture(String name, String teacher, LocalTime startTime, LocalTime endTime, String homeRoom, String lectureRoom, List<SectionLecture> sectionLectureList) {
+    public Lecture(String name, String teacher, LocalTime startTime, LocalTime endTime, String lectureRoom, List<SectionLecture> sectionLectureList) {
         this.name = name;
         this.teacher = teacher;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.homeRoom = homeRoom;
         this.lectureRoom = lectureRoom;
         this.sectionLectureList = sectionLectureList;
     }
