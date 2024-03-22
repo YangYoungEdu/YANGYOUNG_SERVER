@@ -1,6 +1,7 @@
 package com.yangyoung.server.section.controller;
 
 import com.yangyoung.server.section.dto.request.SectionCreateRequest;
+import com.yangyoung.server.section.dto.request.SectionUpdateRequest;
 import com.yangyoung.server.section.dto.response.*;
 import com.yangyoung.server.section.service.SectionService;
 import lombok.RequiredArgsConstructor;
@@ -57,5 +58,15 @@ public class SectionController {
         sectionService.deleteSection(sectionId);
 
         return ResponseEntity.noContent().build();
+    }
+
+    // 반 정보 수정
+    @PutMapping("")
+    public ResponseEntity<SectionResponse> updateSection(@RequestBody final SectionUpdateRequest request) {
+
+        final SectionResponse response = sectionService.updateSection(request);
+
+        return ResponseEntity.ok()
+                .body(response);
     }
 }

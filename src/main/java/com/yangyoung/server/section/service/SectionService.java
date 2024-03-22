@@ -6,6 +6,7 @@ import com.yangyoung.server.section.domain.Section;
 import com.yangyoung.server.section.domain.SectionRepository;
 import com.yangyoung.server.section.dto.request.SectionCreateRequest;
 import com.yangyoung.server.section.dto.request.SectionStudentChangeRequest;
+import com.yangyoung.server.section.dto.request.SectionUpdateRequest;
 import com.yangyoung.server.section.dto.response.*;
 import com.yangyoung.server.sectionTask.dto.response.SectionTaskAllResponse;
 import com.yangyoung.server.student.dto.response.StudentAllResponse;
@@ -66,6 +67,14 @@ public class SectionService {
     public void deleteSection(Long sectionId) {
         Section section = sectionSubService.findSectionBySectionId(sectionId);
         sectionRepository.delete(section);
+    }
+
+    // 반 정보 수정
+    @Transactional
+    public SectionResponse updateSection(SectionUpdateRequest request) {
+        Section section = sectionSubService.findSectionBySectionId(request.getSectionId());
+        section.update(request.getName(), request.getTeacher(), request.getHomeRoom());
+        return new SectionResponse(section);
     }
 
 }
