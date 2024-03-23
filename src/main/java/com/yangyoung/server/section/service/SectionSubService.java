@@ -82,5 +82,14 @@ public class SectionSubService {
                 .map(studentSection -> studentSection.getSection().getName())
                 .collect(Collectors.toList());
     }
+
+    // 학생이 속한 반 홈룸 조회
+    @Transactional
+    public List<String> findSectionHomeRoomsByStudentId(Long studentId) {
+        List<StudentSection> studentSectionList = studentSectionRepository.findAllByStudentId(studentId);
+        return studentSectionList.stream()
+                .map(studentSection -> studentSection.getSection().getHomeRoom())
+                .collect(Collectors.toList());
+    }
 }
 

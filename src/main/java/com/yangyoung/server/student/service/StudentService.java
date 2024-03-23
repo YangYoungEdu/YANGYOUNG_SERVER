@@ -101,11 +101,14 @@ public class StudentService {
 
         StudentTaskAllResponse studentTaskAllResponse = taskService.getTasksByStudentAndDate(studentId, today);
 
+        String homeRoom = sectionSubService.findSectionHomeRoomsByStudentId(studentId).get(0);
+
         return new TodayScheduleResponse(
                 today,
                 studentDetailResponse.getStudentResponse(),
                 lectureAllResponse,
-                studentTaskAllResponse);
+                studentTaskAllResponse,
+                homeRoom);
     }
 
     // 반 - 학생 정보 조회

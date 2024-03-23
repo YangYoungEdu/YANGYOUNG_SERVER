@@ -22,4 +22,5 @@ public class TodayScheduleResponse {
 
     private StudentTaskAllResponse studentTaskAllResponse;
 
+    private String homeRoom;
 }
