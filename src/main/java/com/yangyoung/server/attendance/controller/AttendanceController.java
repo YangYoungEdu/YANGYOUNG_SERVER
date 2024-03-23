@@ -21,12 +21,12 @@ public class AttendanceController {
 
     // 직접 출석 체크 컨트롤러 (학생)
     @PostMapping("")
-    public ResponseEntity<AttendanceResponse> postAttendance(@RequestBody final AttendanceStudentRequest request) {
+    public ResponseEntity<Void> postAttendance(@RequestBody final AttendanceStudentRequest request) {
 
-        final AttendanceResponse response = attendanceService.attend(request);
+        attendanceService.attend(request);
 
         return ResponseEntity.ok()
-                .body(response);
+                .build();
     }
 
     // 출석 체크 컨트롤러 (반)

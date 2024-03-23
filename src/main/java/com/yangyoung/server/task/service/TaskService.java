@@ -119,7 +119,11 @@ public class TaskService {
         for (SectionTask sectionTask : sectionTaskList) {
             Task task = sectionTask.getTask();
             Section section = sectionTask.getSection();
-            SectionTaskResponse taskResponse = new SectionTaskResponse(task.getId(), task.getContent(), section.getName());
+            SectionTaskResponse taskResponse = new SectionTaskResponse(
+                    task.getId(),
+                    task.getContent(),
+                    task.getTaskDate(),
+                    task.getTaskType().getTypeName());
             taskList.add(taskResponse);
         }
 
@@ -183,7 +187,8 @@ public class TaskService {
                 .map(sectionTask -> new SectionTaskResponse(
                         sectionTask.getTask().getId(),
                         sectionTask.getTask().getContent(),
-                        sectionTask.getSection().getName()))
+                        sectionTask.getTask().getTaskDate(),
+                        sectionTask.getTask().getTaskType().getTypeName()))
                 .toList();
 
         return new SectionTaskAllResponse(taskResponseList, taskResponseList.size());

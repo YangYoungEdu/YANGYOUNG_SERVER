@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -13,7 +14,10 @@ public class SectionTaskResponse {
 
     private Long id;
 
-    private String assignment;
+    private String content;
 
-    private String sectionName;
+    private LocalDate date;
+
+    private String taskType;
+
 }
