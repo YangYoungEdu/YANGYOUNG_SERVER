@@ -117,12 +117,12 @@ public class LectureSubService {
     }
 
     // 오늘 강의 조회
-    public List<LectureResponse> getTodayLectures(LectureAllResponse lectureAllResponse, DayOfWeek todayDayOfWeek) {
+    public List<LectureResponse> getTodayLectures(LectureAllResponse lectureAllResponse, DayOfWeek todayDayOfWeek, LocalDate today) {
 
-        String today = utilService.convertDayToKorean(todayDayOfWeek.toString());
+        String todayString = utilService.convertDayToKorean(todayDayOfWeek.toString());
 
         return lectureAllResponse.getLectureResponseList().stream()
-                .filter(lecture -> lecture.getDayList().contains(today))
+                .filter(lecture -> lecture.getDayList().contains(todayString) || lecture.getDateList().contains(today))
                 .toList();
     }
 

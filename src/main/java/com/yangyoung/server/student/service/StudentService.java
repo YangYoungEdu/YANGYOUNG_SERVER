@@ -96,7 +96,7 @@ public class StudentService {
         DayOfWeek todayDayOfWeek = today.getDayOfWeek();
         StudentDetailResponse studentDetailResponse = readStudentDetail(studentId);
 
-        List<LectureResponse> lectureResponseList = lectureSubService.getTodayLectures(studentDetailResponse.getLectureAllResponse(), todayDayOfWeek);
+        List<LectureResponse> lectureResponseList = lectureSubService.getTodayLectures(studentDetailResponse.getLectureAllResponse(), todayDayOfWeek, today);
         LectureAllResponse lectureAllResponse = new LectureAllResponse(lectureResponseList, lectureResponseList.size());
 
         StudentTaskAllResponse studentTaskAllResponse = taskService.getTasksByStudentAndDate(studentId, today);
