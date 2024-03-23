@@ -12,6 +12,7 @@ import com.yangyoung.server.exception.ErrorCode;
 import com.yangyoung.server.exception.MyException;
 import com.yangyoung.server.section.domain.Section;
 import com.yangyoung.server.section.domain.SectionRepository;
+import com.yangyoung.server.section.service.SectionSubService;
 import com.yangyoung.server.student.domain.Student;
 import com.yangyoung.server.student.domain.StudentRepository;
 import com.yangyoung.server.student.service.StudentSubService;
@@ -34,24 +35,18 @@ public class AttendanceService {
     private final AttendanceRepository attendanceRepository;
     private final StudentRepository studentRepository;
     private final SectionRepository sectionRepository;
+
     private final StudentSubService studentSubService;
+    private final SectionSubService sectionSubService;
 
     // 출석 체크 메소드 (학생)
     @Transactional
-    public AttendanceResponse attend(AttendanceStudentRequest request) {
+    public void attend(AttendanceStudentRequest request) {
 
 //        LocalDateTime now = LocalDateTime.now();
         LocalDateTime now = LocalDateTime.now().plusHours(9);
         LocalDateTime start = now.withHour(0).withMinute(0).withSecond(0);
         LocalDateTime end = now.withHour(23).withMinute(59).withSecond(59);
-
-        Optional<Attendance> check = attendanceRepository.findByStudentIdAndAttendedDateTimeBetween(
-                request.getStudentId(), start, end);
-        if (check.isPresent()) {
-            check.get().updateAttendanceType(AttendanceType.ATTENDANCE);
-            attendanceRepository.save(check.get());
-            return new AttendanceResponse(check.get());
-        }
 
         log.info("isEmpty");
         Optional<Student> attendedStudent = studentRepository.findById(request.getStudentId());
@@ -59,30 +54,25 @@ public class AttendanceService {
             throw new MyException(ErrorCode.STUDENT_NOT_FOUND);
         }
 
-        Optional<Section> attendedSection = sectionRepository.findById(null);
-        if (attendedSection.isEmpty()) { // 해당 학생의 섹션이 존재하지 않을 때
-            throw new MyException(ErrorCode.SECTION_NOT_FOUND);
-        }
-
-//        LocalTime requestedTime = request.getAttendedDateTime().toLocalTime();
-//        LocalTime startTime = LocalTime.of(17, 30);
-//        long minutesDifference = ChronoUnit.MINUTES.between(startTime, requestedTime);
-
-        AttendanceType attendanceType = AttendanceType.ATTENDANCE;
-//        if (minutesDifference <= -5) { // 5분 이후 출석 시 지각 처리
-//            attendanceType = AttendanceType.LATENESS;
+//        Optional<Attendance> check = attendanceRepository.findByStudentIdAndAttendedDateTimeBetween(
+//                request.getStudentId(), start, end);
+//        if (check.isPresent()) {
+//            check.get().updateAttendanceType(AttendanceType.ATTENDANCE);
+//            attendanceRepository.save(check.get());
 //        }
 
-        Attendance attendance = new Attendance(
-                now,
-                attendanceType,
-                request.getNote(),
-                attendedStudent.get(),
-                attendedSection.get());
-        log.info("제발");
-        attendanceRepository.save(attendance);
-
-        return new AttendanceResponse(attendance);
+        List<Section> sectionList = sectionSubService.findSectionsByStudentId(request.getStudentId());
+        List<Attendance> attendanceList = new ArrayList<>();
+        for (Section section : sectionList) {
+            Attendance attendance = new Attendance(
+                    now,
+                    AttendanceType.ATTENDANCE,
+                    request.getNote(),
+                    attendedStudent.get(),
+                    section);
+            attendanceList.add(attendance);
+        }
+        attendanceRepository.saveAll(attendanceList);
     }
 
     // 출석 체크 메소드 (반)
