@@ -7,9 +7,9 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
-public class SectionStudentChangeRequest {
+public class SectionStudentUpdateRequest {
 
-    private Long studentId;
+    private Long sectionId;
 
-    private List<Long> sectionIdLIst;
+    private List<Long> studentIdList;
 }

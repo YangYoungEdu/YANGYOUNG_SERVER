@@ -1,6 +1,7 @@
 package com.yangyoung.server.section.controller;
 
 import com.yangyoung.server.section.dto.request.SectionCreateRequest;
+import com.yangyoung.server.section.dto.request.SectionStudentUpdateRequest;
 import com.yangyoung.server.section.dto.request.SectionUpdateRequest;
 import com.yangyoung.server.section.dto.response.*;
 import com.yangyoung.server.section.service.SectionService;
@@ -68,5 +69,15 @@ public class SectionController {
 
         return ResponseEntity.ok()
                 .body(response);
+    }
+
+    // 반 학생 추가/삭제
+    @PatchMapping("/student")
+    public ResponseEntity<Void> updateSectionStudent(@RequestBody final SectionStudentUpdateRequest request) {
+
+        sectionService.updateSectionStudent(request);
+
+        return ResponseEntity.ok()
+                .build();
     }
 }

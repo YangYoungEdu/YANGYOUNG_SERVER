@@ -7,19 +7,25 @@ import com.yangyoung.server.lecture.service.LectureService;
 import com.yangyoung.server.section.domain.Section;
 import com.yangyoung.server.section.domain.SectionRepository;
 import com.yangyoung.server.section.dto.request.SectionCreateRequest;
-import com.yangyoung.server.section.dto.request.SectionStudentChangeRequest;
+import com.yangyoung.server.section.dto.request.SectionStudentUpdateRequest;
 import com.yangyoung.server.section.dto.request.SectionUpdateRequest;
 import com.yangyoung.server.section.dto.response.*;
 import com.yangyoung.server.sectionTask.dto.response.SectionTaskAllResponse;
+import com.yangyoung.server.student.domain.Student;
 import com.yangyoung.server.student.dto.response.StudentAllResponse;
 import com.yangyoung.server.student.service.StudentService;
+import com.yangyoung.server.student.service.StudentSubService;
+import com.yangyoung.server.studentSection.domain.StudentSection;
+import com.yangyoung.server.studentSection.domain.StudentSectionRepository;
 import com.yangyoung.server.task.service.TaskService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,10 +33,12 @@ import java.util.List;
 public class SectionService {
 
     private final SectionRepository sectionRepository;
+    private final StudentSectionRepository studentSectionRepository;
     private final LectureService lectureService;
     private final StudentService studentService;
     private final SectionSubService sectionSubService;
     private final TaskService taskService;
+    private final StudentSubService studentSubService;
 
     // 반 생성
     @Transactional
@@ -84,4 +92,27 @@ public class SectionService {
         return new SectionResponse(section);
     }
 
+    // 반 학생 추가/삭제
+    @Transactional
+    public void updateSectionStudent(SectionStudentUpdateRequest request) {
+
+        Section section = sectionSubService.findSectionBySectionId(request.getSectionId());
+
+        List<StudentSection> studentSectionList = new ArrayList<>();
+        for (int i = 0; i < request.getStudentIdList().size(); i++) {
+            Optional<StudentSection> studentSection = studentSectionRepository.findBySectionIdAndStudentId(request.getSectionId(), request.getStudentIdList().get(i));
+            if (studentSection.isPresent()) {
+                studentSectionList.add(studentSection.get());
+            }
+            if (studentSection.isEmpty()) {
+                Student student = studentSubService.findStudentByStudentId(request.getStudentIdList().get(i));
+                StudentSection newStudentSection = StudentSection.builder()
+                        .section(section)
+                        .student(student)
+                        .build();
+                studentSectionList.add(newStudentSection);
+            }
+        }
+        studentSectionRepository.saveAll(studentSectionList);
+    }
 }
