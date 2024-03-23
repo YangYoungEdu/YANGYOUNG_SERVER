@@ -45,6 +45,7 @@ public class SectionService {
     public SectionResponse createSection(SectionCreateRequest request) {
 
         Section section = sectionRepository.save(request.toEntity());
+        sectionSubService.assignStudentToSection(section.getId(), request.getStudentIdList());
 
         return new SectionResponse(section);
     }
@@ -95,24 +96,6 @@ public class SectionService {
     // 반 학생 추가/삭제
     @Transactional
     public void updateSectionStudent(SectionStudentUpdateRequest request) {
-
-        Section section = sectionSubService.findSectionBySectionId(request.getSectionId());
-
-        List<StudentSection> studentSectionList = new ArrayList<>();
-        for (int i = 0; i < request.getStudentIdList().size(); i++) {
-            Optional<StudentSection> studentSection = studentSectionRepository.findBySectionIdAndStudentId(request.getSectionId(), request.getStudentIdList().get(i));
-            if (studentSection.isPresent()) {
-                studentSectionList.add(studentSection.get());
-            }
-            if (studentSection.isEmpty()) {
-                Student student = studentSubService.findStudentByStudentId(request.getStudentIdList().get(i));
-                StudentSection newStudentSection = StudentSection.builder()
-                        .section(section)
-                        .student(student)
-                        .build();
-                studentSectionList.add(newStudentSection);
-            }
-        }
-        studentSectionRepository.saveAll(studentSectionList);
+        sectionSubService.assignStudentToSection(request.getSectionId(), request.getStudentIdList());
     }
 }
