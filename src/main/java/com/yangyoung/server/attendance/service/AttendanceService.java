@@ -108,7 +108,8 @@ public class AttendanceService {
             AttendanceType attendanceType = attendanceUpdateRequest.getAttendanceType();
             String note = attendanceUpdateRequest.getNote();
 
-            Optional<Attendance> attendance = attendanceRepository.findByStudentIdAndAttendedDateTimeBetween(
+            Optional<Attendance> attendance = attendanceRepository.findByStudentIdAndSectionIdAndAttendedDateTimeBetween(
+                    attendanceUpdateRequest.getStudentId(),
                     attendanceUpdateRequest.getStudentId(), startDateTime, endDateTime);
             if (attendance.isPresent()) {
                 attendance.get().update(attendanceType, note);
