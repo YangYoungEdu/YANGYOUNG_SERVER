@@ -159,7 +159,7 @@ public class AttendanceService {
         List<Student> studentList = studentSubService.getStudentsBySectionId(sectionId);
         List<AttendanceResponse> attendanceResponseList = new ArrayList<>();
         for (Student student : studentList) {
-            Optional<Attendance> attendance = attendanceRepository.findByStudentIdAndAttendedDateTimeBetween(student.getId(), startDateTime, endDateTime);
+            Optional<Attendance> attendance = attendanceRepository.findBySectionIdAndStudentIdAndAttendedDateTimeBetween(sectionId, student.getId(), startDateTime, endDateTime);
             AttendanceResponse attendanceResponse = new AttendanceResponse();
             if (attendance.isEmpty()) {
                 attendanceResponse = new AttendanceResponse(
