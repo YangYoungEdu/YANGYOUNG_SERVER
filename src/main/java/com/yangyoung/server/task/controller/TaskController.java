@@ -3,10 +3,7 @@ package com.yangyoung.server.task.controller;
 import com.yangyoung.server.sectionTask.dto.response.SectionTaskAllResponse;
 import com.yangyoung.server.studentTask.dto.response.StudentTaskAllResponse;
 import com.yangyoung.server.studentTask.dto.response.StudentTaskResponse;
-import com.yangyoung.server.task.dto.request.TaskSectionRequest;
-import com.yangyoung.server.task.dto.request.TaskStudentRequest;
-import com.yangyoung.server.task.dto.request.TaskProgressUpdateRequest;
-import com.yangyoung.server.task.dto.request.TaskUpdateRequest;
+import com.yangyoung.server.task.dto.request.*;
 import com.yangyoung.server.task.dto.response.TaskPostResponse;
 import com.yangyoung.server.task.service.TaskService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +19,16 @@ import java.util.List;
 public class TaskController {
 
     private final TaskService taskService;
+
+    // 과제 여러분반 일괄 추가
+    @PostMapping("/sections")
+    public ResponseEntity<Void> createTaskBySections(@RequestBody TaskMultipleSectionRequest request) {
+
+        taskService.createTaskBySections(request);
+
+        return ResponseEntity.ok()
+                .build();
+    }
 
     /* 개인 과제 추가 */
     @PostMapping("/student")

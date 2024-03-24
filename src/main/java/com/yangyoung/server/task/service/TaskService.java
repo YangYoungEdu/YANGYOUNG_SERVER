@@ -18,10 +18,7 @@ import com.yangyoung.server.studentTask.dto.response.StudentTaskResponse;
 import com.yangyoung.server.task.domain.Task;
 import com.yangyoung.server.task.domain.TaskRepository;
 import com.yangyoung.server.task.domain.TaskType;
-import com.yangyoung.server.task.dto.request.TaskSectionRequest;
-import com.yangyoung.server.task.dto.request.TaskStudentRequest;
-import com.yangyoung.server.task.dto.request.TaskProgressUpdateRequest;
-import com.yangyoung.server.task.dto.request.TaskUpdateRequest;
+import com.yangyoung.server.task.dto.request.*;
 import com.yangyoung.server.task.dto.response.TaskPostResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +43,33 @@ public class TaskService {
 
     private final StudentSubService studentSubService;
     private final SectionSubService sectionSubService;
+
+    // 과제 여러반 추가
+    @Transactional
+    public void createTaskBySections(TaskMultipleSectionRequest request) {
+
+        Task task = taskRepository.save(request.toEntity());
+
+        List<SectionTask> sectionTaskList = new ArrayList<>();
+        for (int i = 0; i < request.getSectionIdList().size(); i++) {
+            Section section = sectionSubService.findSectionBySectionId(request.getSectionIdList().get(i));
+            SectionTask sectionTask = SectionTask.builder().
+                    section(section).
+                    task(task).
+                    build();
+            sectionTaskList.add(sectionTask);
+        }
+        sectionTaskRepository.saveAll(sectionTaskList);
+
+        List<Student> studentList = request.getSectionIdList().stream()
+                .map(studentSubService::getStudentsBySectionId)
+                .flatMap(List::stream)
+                .toList();
+        List<StudentTask> studentTaskList = studentList.stream()
+                .map(student -> new StudentTask(student, task, TaskProgress.NOT_STARTED))
+                .toList();
+        studentTaskRepository.saveAll(studentTaskList);
+    }
 
     // 개인 과제 추가
     @Transactional

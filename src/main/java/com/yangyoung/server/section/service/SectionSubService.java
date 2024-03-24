@@ -2,19 +2,20 @@ package com.yangyoung.server.section.service;
 
 import com.yangyoung.server.exception.ErrorCode;
 import com.yangyoung.server.exception.MyException;
-import com.yangyoung.server.lecture.domain.Lecture;
-import com.yangyoung.server.lecture.dto.response.LectureAllResponse;
 import com.yangyoung.server.section.domain.Section;
 import com.yangyoung.server.section.domain.SectionRepository;
 import com.yangyoung.server.section.dto.response.SectionAllBriefResponse;
 import com.yangyoung.server.section.dto.response.SectionBriefResponse;
 import com.yangyoung.server.section.dto.response.SectionResponse;
+import com.yangyoung.server.student.domain.Student;
+import com.yangyoung.server.student.domain.StudentRepository;
 import com.yangyoung.server.studentSection.domain.StudentSection;
 import com.yangyoung.server.studentSection.domain.StudentSectionRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,7 +26,7 @@ public class SectionSubService {
 
     private final SectionRepository sectionRepository;
     private final StudentSectionRepository studentSectionRepository;
-
+    private final StudentRepository studentRepository;
 
     // id에 해당하는 반 정보 조회 - 단일
     @Transactional
@@ -90,6 +91,31 @@ public class SectionSubService {
         return studentSectionList.stream()
                 .map(studentSection -> studentSection.getSection().getHomeRoom())
                 .collect(Collectors.toList());
+    }
+
+    // 반에 학생 할당
+    @Transactional
+    public void assignStudentToSection(Long sectionId, List<Long> studentIdList) {
+
+        Section section = findSectionBySectionId(sectionId);
+
+        List<StudentSection> studentSectionList = new ArrayList<>();
+        for (int i = 0; i < studentIdList.size(); i++) {
+            Optional<StudentSection> studentSection = studentSectionRepository.findBySectionIdAndStudentId(sectionId, studentIdList.get(i));
+            if (studentSection.isPresent()) {
+                studentSectionList.add(studentSection.get());
+            }
+            if (studentSection.isEmpty()) {
+                Student student = studentRepository.findById(studentIdList.get(i))
+                        .orElseThrow(() -> new MyException(ErrorCode.STUDENT_NOT_FOUND));
+                StudentSection newStudentSection = StudentSection.builder()
+                        .section(section)
+                        .student(student)
+                        .build();
+                studentSectionList.add(newStudentSection);
+            }
+        }
+        studentSectionRepository.saveAll(studentSectionList);
     }
 }
 
