@@ -64,6 +64,12 @@ public class AttendanceService {
         List<Section> sectionList = sectionSubService.findSectionsByStudentId(request.getStudentId());
         List<Attendance> attendanceList = new ArrayList<>();
         for (Section section : sectionList) {
+            Optional<Attendance> check = attendanceRepository.findByStudentIdAndSectionIdAndAttendedDateTimeBetween(
+                    request.getStudentId(), section.getId(), start, end);
+            if (check.isPresent()) {
+                check.get().updateAttendanceType(AttendanceType.ATTENDANCE);
+                attendanceRepository.save(check.get());
+            }
             Attendance attendance = new Attendance(
                     now,
                     AttendanceType.ATTENDANCE,
@@ -159,7 +165,7 @@ public class AttendanceService {
         List<Student> studentList = studentSubService.getStudentsBySectionId(sectionId);
         List<AttendanceResponse> attendanceResponseList = new ArrayList<>();
         for (Student student : studentList) {
-            Optional<Attendance> attendance = attendanceRepository.findByStudentIdAndAttendedDateTimeBetween(student.getId(), startDateTime, endDateTime);
+            Optional<Attendance> attendance = attendanceRepository.findByStudentIdAndSectionIdAndAttendedDateTimeBetween(student.getId(), sectionId, startDateTime, endDateTime);
             AttendanceResponse attendanceResponse = new AttendanceResponse();
             if (attendance.isEmpty()) {
                 attendanceResponse = new AttendanceResponse(
