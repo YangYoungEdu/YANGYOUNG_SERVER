@@ -86,20 +86,15 @@ public class AttendanceService {
     public AttendanceAllResponse attendBySection(AttendanceSectionRequest request) {
 
         LocalDate targetDate;
-        log.info("list size: {}", request.getAttendanceUpdateRequestList().size());
         if (request.getAttendanceUpdateRequestList().isEmpty()) {
             targetDate = LocalDate.now();
         } else {
             targetDate = request.getAttendanceUpdateRequestList().get(0).getAttendedDateTime().plusHours(9).toLocalDate();
         }
-//        LocalDate targetDate = request.getAttendanceUpdateRequestList().get(0).getAttendedDateTime().toLocalDate();
         LocalDateTime startDateTime = targetDate.atStartOfDay();
         LocalDateTime endDateTime = targetDate.atTime(23, 59, 59);
 
-        Optional<Section> attendedSection = sectionRepository.findById(request.getSectionId());
-        if (attendedSection.isEmpty()) { // 해당 섹션이 존재하지 않을 때
-            throw new MyException(ErrorCode.SECTION_NOT_FOUND);
-        }
+        Section attendedSection = sectionSubService.findSectionBySectionId(request.getSectionId());
 
         List<Attendance> attendanceList = new ArrayList<>();
         List<AttendanceUpdateRequest> attendanceStudentRequestedList = request.getAttendanceUpdateRequestList();
@@ -112,10 +107,12 @@ public class AttendanceService {
                     attendanceUpdateRequest.getStudentId(),
                     attendanceUpdateRequest.getStudentId(), startDateTime, endDateTime);
             if (attendance.isPresent()) {
+                log.info("isPresent");
                 attendance.get().update(attendanceType, note);
                 attendanceList.add(attendance.get());
             }
             if (attendance.isEmpty()) {
+                log.info("isEmpty");
                 Student student = studentSubService.findStudentByStudentId(attendanceUpdateRequest.getStudentId());
 
                 Attendance newAttendance = new Attendance(
@@ -123,11 +120,13 @@ public class AttendanceService {
                         attendanceType,
                         note,
                         student,
-                        attendedSection.get());
+                        attendedSection);
+                attendanceRepository.save(newAttendance);
+                log.info("newAttendance: " + newAttendance);
                 attendanceList.add(newAttendance);
             }
         }
-        attendanceRepository.saveAll(attendanceList);
+//        attendanceRepository.saveAll(attendanceList);
 
         List<AttendanceResponse> attendanceResponseList = attendanceList.stream()
                 .map(AttendanceResponse::new)
