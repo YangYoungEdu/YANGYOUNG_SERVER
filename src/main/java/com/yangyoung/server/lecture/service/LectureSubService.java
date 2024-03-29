@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -123,6 +124,7 @@ public class LectureSubService {
 
         return lectureAllResponse.getLectureResponseList().stream()
                 .filter(lecture -> lecture.getDayList().contains(todayString) || lecture.getDateList().contains(today))
+                .sorted(Comparator.comparing(LectureResponse::getStartTime))
                 .toList();
     }
 
