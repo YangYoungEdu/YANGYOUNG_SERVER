@@ -23,9 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -157,42 +155,85 @@ public class AttendanceService {
 
         Section section = sectionRepository.findById(sectionId)
                 .orElseThrow(() -> new MyException(ErrorCode.SECTION_NOT_FOUND));
+
         LocalDate targetDate = selectedDay.toLocalDate();
         LocalDateTime startDateTime = targetDate.atStartOfDay();
         LocalDateTime endDateTime = targetDate.atTime(23, 59, 59);
 
-        List<Attendance> attendanceList = attendanceRepository.findBySectionIdAndAttendedDateTimeBetween(sectionId, startDateTime, endDateTime);
+        // 각 학생별로 최신의 출석 정보를 유지하는 Map 생성
+        Map<Long, Attendance> latestAttendanceMap = new HashMap<>();
+        attendanceRepository.findBySectionIdAndAttendedDateTimeBetween(sectionId, startDateTime, endDateTime)
+                .forEach(attendance -> {
+                    Long studentId = attendance.getStudent().getId();
+                    latestAttendanceMap.put(studentId, attendance); // 최신 정보 업데이트
+                });
+
         List<Student> studentList = studentSubService.getStudentsBySectionId(sectionId);
         List<AttendanceResponse> attendanceResponseList = new ArrayList<>();
+
         for (Student student : studentList) {
-            Optional<Attendance> attendance = attendanceRepository.findByStudentIdAndSectionIdAndAttendedDateTimeBetween(student.getId(), sectionId, startDateTime, endDateTime);
-            AttendanceResponse attendanceResponse = new AttendanceResponse();
-            if (attendance.isEmpty()) {
-                attendanceResponse = new AttendanceResponse(
-                        startDateTime,
-                        student.getId(),
-                        student.getName(),
-                        section.getName(),
-                        student.getStudentPhoneNumber(),
-                        student.getParentPhoneNumber(),
-                        null,
-                        " ");
-            }
-            log.info("parentPhoneNumber: " + attendanceResponse.getParentPhoneNumber());
-            if (attendance.isPresent()) {
-                attendanceResponse = new AttendanceResponse(
-                        attendance.get().getAttendedDateTime(),
-                        student.getId(),
-                        student.getName(),
-                        section.getName(),
-                        student.getStudentPhoneNumber(),
-                        student.getParentPhoneNumber(),
-                        attendance.get().getAttendanceType(),
-                        attendance.get().getNote());
-            }
+            Attendance latestAttendance = latestAttendanceMap.get(student.getId());
+            AttendanceResponse attendanceResponse = new AttendanceResponse(
+                    latestAttendance != null ? latestAttendance.getAttendedDateTime() : startDateTime,
+                    student.getId(),
+                    student.getName(),
+                    section.getName(),
+                    student.getStudentPhoneNumber(),
+                    student.getParentPhoneNumber(),
+                    latestAttendance != null ? latestAttendance.getAttendanceType() : null,
+                    latestAttendance != null ? latestAttendance.getNote() : " "
+            );
             attendanceResponseList.add(attendanceResponse);
         }
 
-        return new AttendanceAllResponse(attendanceResponseList, attendanceList.size());
+        return new AttendanceAllResponse(attendanceResponseList, latestAttendanceMap.size());
     }
+
+
+//    @Transactional
+//    public AttendanceAllResponse getAllAttendancesBySection(Long sectionId, LocalDateTime selectedDay) {
+//
+//        Section section = sectionRepository.findById(sectionId)
+//                .orElseThrow(() -> new MyException(ErrorCode.SECTION_NOT_FOUND));
+//        LocalDate targetDate = selectedDay.toLocalDate();
+//        LocalDateTime startDateTime = targetDate.atStartOfDay();
+//        LocalDateTime endDateTime = targetDate.atTime(23, 59, 59);
+//
+//        List<Attendance> attendanceList = attendanceRepository.findBySectionIdAndAttendedDateTimeBetween(sectionId, startDateTime, endDateTime);
+//        for (Attendance attendance : attendanceList) {
+//            log.info("attendance: " + attendance.getStudent().getName());
+//        }
+//        List<Student> studentList = studentSubService.getStudentsBySectionId(sectionId);
+//        List<AttendanceResponse> attendanceResponseList = new ArrayList<>();
+//        for (Student student : studentList) {
+//            Optional<Attendance> attendance = attendanceRepository.findByStudentIdAndSectionIdAndAttendedDateTimeBetween(student.getId(), sectionId, startDateTime, endDateTime);
+//            AttendanceResponse attendanceResponse = new AttendanceResponse();
+//            if (attendance.isEmpty()) {
+//                attendanceResponse = new AttendanceResponse(
+//                        startDateTime,
+//                        student.getId(),
+//                        student.getName(),
+//                        section.getName(),
+//                        student.getStudentPhoneNumber(),
+//                        student.getParentPhoneNumber(),
+//                        null,
+//                        " ");
+//            }
+//            log.info("parentPhoneNumber: " + attendanceResponse.getParentPhoneNumber());
+//            if (attendance.isPresent()) {
+//                attendanceResponse = new AttendanceResponse(
+//                        attendance.get().getAttendedDateTime(),
+//                        student.getId(),
+//                        student.getName(),
+//                        section.getName(),
+//                        student.getStudentPhoneNumber(),
+//                        student.getParentPhoneNumber(),
+//                        attendance.get().getAttendanceType(),
+//                        attendance.get().getNote());
+//            }
+//            attendanceResponseList.add(attendanceResponse);
+//        }
+//
+//        return new AttendanceAllResponse(attendanceResponseList, attendanceList.size());
+//    }
 }
