@@ -21,6 +21,4 @@ public class StudentUpdateRequest {
     private String studentPhoneNumber;
 
     private String parentPhoneNumber;
-
-    private List<Long> sectionIdList;
 }

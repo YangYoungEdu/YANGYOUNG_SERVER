@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 public class LectureAllResponse {
 
-    private List<LectureResponse> lectureResponseList;
+    private List<LectureBriefResponse> lectureResponseList;
 
     private Integer lectureCount;
 

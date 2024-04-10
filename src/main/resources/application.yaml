@@ -4,3 +4,5 @@ springdoc:
 spring:
   profiles:
     include: db, s3
+#logging:
+#  config: classpath:logback-spring.xml

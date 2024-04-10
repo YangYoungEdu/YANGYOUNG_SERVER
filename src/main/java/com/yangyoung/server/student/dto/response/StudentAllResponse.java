@@ -14,10 +14,6 @@ public class StudentAllResponse {
 
     private List<StudentResponse> studentResponseList;
 
-    private List<String> gradeList;
-
-    private List<String> schoolList;
-
     private Integer size;
 
 }

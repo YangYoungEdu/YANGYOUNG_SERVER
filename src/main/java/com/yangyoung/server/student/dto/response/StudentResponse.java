@@ -25,15 +25,12 @@ public class StudentResponse {
 
     private String parentPhoneNumber;
 
-    private List<String> sectionNameList;
-
-    public StudentResponse(Student student, List<String> sectionNameList) {
+    public StudentResponse(Student student) {
         this.id = student.getId();
         this.name = student.getName();
         this.school = student.getSchool();
         this.grade = student.getGrade().getGradeName();
         this.studentPhoneNumber = student.getStudentPhoneNumber();
         this.parentPhoneNumber = student.getParentPhoneNumber();
-        this.sectionNameList = sectionNameList;
     }
 }

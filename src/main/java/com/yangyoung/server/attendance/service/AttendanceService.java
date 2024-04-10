@@ -3,13 +3,13 @@ package com.yangyoung.server.attendance.service;
 import com.yangyoung.server.attendance.domain.Attendance;
 import com.yangyoung.server.attendance.domain.AttendanceRepository;
 import com.yangyoung.server.attendance.domain.AttendanceType;
-import com.yangyoung.server.attendance.dto.request.AttendanceStudentRequest;
 import com.yangyoung.server.attendance.dto.request.AttendanceSectionRequest;
+import com.yangyoung.server.attendance.dto.request.AttendanceStudentRequest;
 import com.yangyoung.server.attendance.dto.request.AttendanceUpdateRequest;
 import com.yangyoung.server.attendance.dto.response.AttendanceAllResponse;
 import com.yangyoung.server.attendance.dto.response.AttendanceResponse;
 import com.yangyoung.server.exception.ErrorCode;
-import com.yangyoung.server.exception.MyException;
+import com.yangyoung.server.exception.attendance.AttendanceNotFoundException;
 import com.yangyoung.server.section.domain.Section;
 import com.yangyoung.server.section.domain.SectionRepository;
 import com.yangyoung.server.section.service.SectionSubService;
@@ -41,24 +41,11 @@ public class AttendanceService {
     @Transactional
     public void attend(AttendanceStudentRequest request) {
 
-//        LocalDateTime now = LocalDateTime.now();
         LocalDateTime now = LocalDateTime.now().plusHours(9);
         LocalDateTime start = now.withHour(0).withMinute(0).withSecond(0);
         LocalDateTime end = now.withHour(23).withMinute(59).withSecond(59);
 
-        log.info("isEmpty");
-        Optional<Student> attendedStudent = studentRepository.findById(request.getStudentId());
-        if (attendedStudent.isEmpty()) { // 해당 학생이 존재하지 않을 때
-            throw new MyException(ErrorCode.STUDENT_NOT_FOUND);
-        }
-
-//        Optional<Attendance> check = attendanceRepository.findByStudentIdAndAttendedDateTimeBetween(
-//                request.getStudentId(), start, end);
-//        if (check.isPresent()) {
-//            check.get().updateAttendanceType(AttendanceType.ATTENDANCE);
-//            attendanceRepository.save(check.get());
-//        }
-
+        Student attendedStudent = studentSubService.findStudentByStudentId(request.getStudentId());
         List<Section> sectionList = sectionSubService.findSectionsByStudentId(request.getStudentId());
         List<Attendance> attendanceList = new ArrayList<>();
         for (Section section : sectionList) {
@@ -72,7 +59,7 @@ public class AttendanceService {
                     now,
                     AttendanceType.ATTENDANCE,
                     request.getNote(),
-                    attendedStudent.get(),
+                    attendedStudent,
                     section);
             attendanceList.add(attendance);
         }
@@ -143,7 +130,9 @@ public class AttendanceService {
 
         Optional<Attendance> result = attendanceRepository.findByStudentIdAndAttendedDateTimeBetween(studentId, startDateTime, endDateTime);
         if (result.isEmpty()) {
-            throw new MyException(ErrorCode.ATTENDANCE_NOT_FOUND);
+            String message = String.format("Attendance not found. (studentId: %d)", studentId);
+            log.info(message);
+            throw new AttendanceNotFoundException(message);
         }
 
         return new AttendanceResponse(result.get());
@@ -153,8 +142,7 @@ public class AttendanceService {
     @Transactional
     public AttendanceAllResponse getAllAttendancesBySection(Long sectionId, LocalDateTime selectedDay) {
 
-        Section section = sectionRepository.findById(sectionId)
-                .orElseThrow(() -> new MyException(ErrorCode.SECTION_NOT_FOUND));
+        Section section = sectionSubService.findSectionBySectionId(sectionId);
 
         LocalDate targetDate = selectedDay.toLocalDate();
         LocalDateTime startDateTime = targetDate.atStartOfDay();

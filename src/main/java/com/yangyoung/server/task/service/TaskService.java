@@ -1,7 +1,5 @@
 package com.yangyoung.server.task.service;
 
-import com.yangyoung.server.exception.ErrorCode;
-import com.yangyoung.server.exception.MyException;
 import com.yangyoung.server.section.domain.Section;
 import com.yangyoung.server.section.service.SectionSubService;
 import com.yangyoung.server.sectionTask.domain.SectionTask;
@@ -43,6 +41,7 @@ public class TaskService {
 
     private final StudentSubService studentSubService;
     private final SectionSubService sectionSubService;
+    private final TaskSubService taskSubService;
 
     // 과제 여러반 추가
     @Transactional
@@ -178,11 +177,8 @@ public class TaskService {
     @Transactional
     public void updateTask(TaskUpdateRequest request) {
 
-        Task task = taskRepository.findById(request.getTaskId())
-                .orElseThrow(() -> new MyException(ErrorCode.TASK_NOT_FOUND));
-
+        Task task = taskSubService.findTaskByTaskId(request.getTaskId());
         task.updateTask(request.getContent(), request.getTaskDate());
-        taskRepository.save(task);
     }
 
     // 날짜별로 과제 조회 - 학생

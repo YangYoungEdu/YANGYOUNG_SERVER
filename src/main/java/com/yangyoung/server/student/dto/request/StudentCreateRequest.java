@@ -1,6 +1,7 @@
 package com.yangyoung.server.student.dto.request;
 
 import com.yangyoung.server.student.domain.Grade;
+import com.yangyoung.server.student.domain.Student;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,4 +26,15 @@ public class StudentCreateRequest {
     private String parentPhoneNumber;
 
     private List<Long> sectionIdList;
+
+    public Student toEntity() {
+        return Student.builder()
+                .id(id)
+                .name(name)
+                .school(school)
+                .grade(grade)
+                .studentPhoneNumber(studentPhoneNumber)
+                .parentPhoneNumber(parentPhoneNumber)
+                .build();
+    }
 }

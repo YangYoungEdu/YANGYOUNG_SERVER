@@ -29,7 +29,7 @@ public class StudentController {
     @GetMapping("")
     public ResponseEntity<StudentAllResponse> readAllStudents() {
 
-        final StudentAllResponse response = studentService.readAllStudents();
+        final StudentAllResponse response = studentService.getAllStudents();
 
         return ResponseEntity.ok()
                 .body(response);
@@ -40,7 +40,7 @@ public class StudentController {
     @GetMapping("/{studentId}")
     public ResponseEntity<StudentDetailResponse> readStudentDetail(@PathVariable final Long studentId) {
 
-        final StudentDetailResponse response = studentService.readStudentDetail(studentId);
+        final StudentDetailResponse response = studentService.getStudentDetail(studentId);
 
         return ResponseEntity.ok()
                 .body(response);

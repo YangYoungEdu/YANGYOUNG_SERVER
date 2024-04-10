@@ -1,35 +1,35 @@
 package com.yangyoung.server.lecture.service;
 
-import com.yangyoung.server.exception.ErrorCode;
-import com.yangyoung.server.exception.MyException;
+import com.yangyoung.server.exception.lecture.LectureNotFoundException;
 import com.yangyoung.server.lecture.domain.Lecture;
 import com.yangyoung.server.lecture.domain.LectureRepository;
 import com.yangyoung.server.lecture.dto.request.LectureCreateRequest;
 import com.yangyoung.server.lecture.dto.response.LectureAllResponse;
-import com.yangyoung.server.lecture.dto.response.LectureResponse;
+import com.yangyoung.server.lecture.dto.response.LectureBriefResponse;
 import com.yangyoung.server.lecture.dto.response.LecturePostResponse;
-import com.yangyoung.server.section.domain.Section;
-import com.yangyoung.server.section.service.SectionSubService;
+import com.yangyoung.server.lecture.dto.response.LectureResponse;
 import com.yangyoung.server.sectionLecture.domain.SectionLecture;
 import com.yangyoung.server.sectionLecture.domain.SectionLectureRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class LectureService {
 
     private final LectureRepository lectureRepository;
     private final SectionLectureRepository sectionLectureRepository;
 
     private final LectureSubService lectureSubService;
-    private final SectionSubService sectionSubService;
+
+    private final Logger logger = LoggerFactory.getLogger(LectureService.class);
 
     // 강의 등록(이름 중복 확인 + 정보 생성 + 요일 할당 + 반 할당)
     @Transactional
@@ -49,9 +49,9 @@ public class LectureService {
     public LectureAllResponse getAllLectures() {
 
         List<Lecture> lectureList = lectureRepository.findAll();
-        List<LectureResponse> lectureResponseList
+        List<LectureBriefResponse> lectureResponseList
                 = lectureList.stream()
-                .map(LectureResponse::new)
+                .map(LectureBriefResponse::new)
                 .collect(Collectors.toList());
 
         return new LectureAllResponse(lectureResponseList, lectureResponseList.size());
@@ -83,7 +83,12 @@ public class LectureService {
 
     // id로 강의 존재 확인
     private Lecture isExistLectureById(Long lectureId) {
-        return lectureRepository.findById(lectureId)
-                .orElseThrow(() -> new MyException(ErrorCode.LECTURE_NOT_FOUND));
+        Optional<Lecture> lecture = lectureRepository.findById(lectureId);
+        if (lecture.isEmpty()) {
+            String message = String.format("Lecture not found. (lectureId: %d)", lectureId);
+            logger.info(message);
+            throw new LectureNotFoundException(message);
+        }
+        return lecture.get();
     }
 }

@@ -7,9 +7,11 @@ import java.util.Optional;
 
 public interface StudentSectionRepository extends JpaRepository<StudentSection, Long> {
 
-    List<StudentSection> findAllByStudentId(Long studentId);
+    List<StudentSection> findByStudentId(Long studentId);
 
     List<StudentSection> findAllBySectionId(Long sectionId);
+
+    List<StudentSection> findAllByStudentIdAndSectionIdIn(Long studentId, List<Long> sectionIdList);
 
     Optional<StudentSection> findBySectionIdAndStudentId(Long sectionId, Long studentId);
 }
