@@ -5,12 +5,14 @@ import com.yangyoung.server.student.dto.request.StudentUpdateRequest;
 import com.yangyoung.server.student.dto.response.*;
 import com.yangyoung.server.student.service.StudentService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v0/student")
+@Slf4j
 public class StudentController {
 
     private final StudentService studentService;
@@ -49,13 +51,13 @@ public class StudentController {
 
     // 오늘의 학생 일정 조회 컨트롤러
     @GetMapping("/today/{studentId}")
-    public ResponseEntity<TodayScheduleResponse> readTodaySchedule(@PathVariable final Long studentId) {
+    public ResponseEntity<TodayScheduleResponse> readTodaySchedule(@PathVariable(value = "studentId") final Long studentId) {
+        log.info("studentId: {}", studentId);
 
         final TodayScheduleResponse response = studentService.readTodaySchedule(studentId);
 
         return ResponseEntity.ok()
                 .body(response);
-
     }
 
     // 반 - 학생 정보 조회 컨트롤러

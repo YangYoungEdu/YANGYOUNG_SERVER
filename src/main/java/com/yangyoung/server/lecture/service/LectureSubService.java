@@ -110,6 +110,7 @@ public class LectureSubService {
 
     // 반 별 강의 응답 생성
     public LectureAllResponse buildLectureAllResponse(List<Lecture> lectureList) {
+
         List<LectureResponse> lectureResponseList = lectureList.stream()
                 .map(LectureResponse::new)
                 .collect(Collectors.toList());
@@ -117,15 +118,18 @@ public class LectureSubService {
         return new LectureAllResponse(lectureResponseList, lectureResponseList.size());
     }
 
+    // 학생이 속한 분반 목록 & 수업에 속한 분반 목록
     // 오늘 강의 조회
-    public List<LectureResponse> getTodayLectures(LectureAllResponse lectureAllResponse, DayOfWeek todayDayOfWeek, LocalDate today) {
+    public LectureAllResponse getTodayLectures(LectureAllResponse lectureAllResponse, DayOfWeek todayDayOfWeek, LocalDate today) {
 
         String todayString = utilService.convertDayToKorean(todayDayOfWeek.toString());
 
-        return lectureAllResponse.getLectureResponseList().stream()
+        List<LectureResponse> lectureResponseList =  lectureAllResponse.getLectureResponseList().stream()
                 .filter(lecture -> lecture.getDayList().contains(todayString) || lecture.getDateList().contains(today))
                 .sorted(Comparator.comparing(LectureResponse::getStartTime))
                 .toList();
+
+        return new LectureAllResponse(lectureResponseList, lectureResponseList.size());
     }
 
     // 학생별 강의 조회

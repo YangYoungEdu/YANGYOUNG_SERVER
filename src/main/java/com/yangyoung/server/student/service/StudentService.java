@@ -89,26 +89,22 @@ public class StudentService {
     @Transactional
     public TodayScheduleResponse readTodaySchedule(Long studentId) {
 
-        log.info("학생 오늘 일정 조회");
         LocalDateTime now = LocalDateTime.now().plusHours(9);
         LocalDate today = now.toLocalDate();
-        log.info("today : " + today);
         DayOfWeek todayDayOfWeek = today.getDayOfWeek();
+
         StudentDetailResponse studentDetailResponse = readStudentDetail(studentId);
 
-        List<LectureResponse> lectureResponseList = lectureSubService.getTodayLectures(studentDetailResponse.getLectureAllResponse(), todayDayOfWeek, today);
-        LectureAllResponse lectureAllResponse = new LectureAllResponse(lectureResponseList, lectureResponseList.size());
+        LectureAllResponse lectureAllResponse = lectureSubService.getTodayLectures(studentDetailResponse.getLectureAllResponse(), todayDayOfWeek, today);
 
         StudentTaskAllResponse studentTaskAllResponse = taskService.getTasksByStudentAndDate(studentId, today);
-
-        String homeRoom = sectionSubService.findSectionHomeRoomsByStudentId(studentId).get(0);
 
         return new TodayScheduleResponse(
                 today,
                 studentDetailResponse.getStudentResponse(),
                 lectureAllResponse,
-                studentTaskAllResponse,
-                homeRoom);
+                studentTaskAllResponse
+        );
     }
 
     // 반 - 학생 정보 조회
