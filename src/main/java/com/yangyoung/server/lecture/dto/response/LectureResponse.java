@@ -33,7 +33,7 @@ public class LectureResponse {
 
     private String lectureRoom;
 
-    private List<String> sectionName;
+    private Long cc;
 
     public LectureResponse(Lecture lecture) {
         this.id = lecture.getId();
@@ -48,8 +48,19 @@ public class LectureResponse {
         this.startTime = lecture.getStartTime();
         this.endTime = lecture.getEndTime();
         this.lectureRoom = lecture.getLectureRoom();
-        this.sectionName = lecture.getSectionLectureList().stream()
-                .map(sectionLecture -> sectionLecture.getSection().getName())
-                .toList();
+        for (int i = 0; i < lecture.getSectionLectureList().size(); i++) {
+            if (lecture.getSectionLectureList().get(i).getLecture().getName().equals(lecture.getName())) {
+                this.homeRoom = lecture.getSectionLectureList().get(i).getSection().getHomeRoom();
+                break;
+            }
+        }
+//        this.homeRoom = lecture.getSectionLectureList().stream()
+//                .filter(sectionLecture -> sectionLecture.getLecture().getName().equals(lecture.getName()))
+//                .map(sectionLecture -> sectionLecture.getSection().getHomeRoom())
+//                .findAny()
+//                .orElse(null);
+        this.cc = lecture.getSectionLectureList().stream()
+                .filter(sectionLecture -> sectionLecture.getLecture().getName().equals(lecture.getName()))
+                .count();
     }
 }
