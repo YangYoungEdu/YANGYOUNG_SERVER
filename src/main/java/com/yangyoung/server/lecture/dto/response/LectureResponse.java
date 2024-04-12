@@ -33,7 +33,8 @@ public class LectureResponse {
 
     private String lectureRoom;
 
-    private Long cc;
+    private List<String> sectionNameList;
+
 
     public LectureResponse(Lecture lecture) {
         this.id = lecture.getId();
@@ -54,13 +55,13 @@ public class LectureResponse {
                 break;
             }
         }
+        this.sectionNameList = lecture.getSectionLectureList().stream()
+                .map(sectionLecture -> sectionLecture.getSection().getName())
+                .toList();
 //        this.homeRoom = lecture.getSectionLectureList().stream()
 //                .filter(sectionLecture -> sectionLecture.getLecture().getName().equals(lecture.getName()))
 //                .map(sectionLecture -> sectionLecture.getSection().getHomeRoom())
 //                .findAny()
 //                .orElse(null);
-        this.cc = lecture.getSectionLectureList().stream()
-                .filter(sectionLecture -> sectionLecture.getLecture().getName().equals(lecture.getName()))
-                .count();
     }
 }
