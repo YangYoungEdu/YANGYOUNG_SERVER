@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v0/student")
@@ -55,6 +57,17 @@ public class StudentController {
         log.info("studentId: {}", studentId);
 
         final TodayScheduleResponse response = studentService.readTodaySchedule(studentId);
+
+        return ResponseEntity.ok()
+                .body(response);
+    }
+
+    // 날짜별 학생 일정 조회 컨트롤러
+    @GetMapping("/date/{studentId}")
+    public ResponseEntity<TodayScheduleResponse> readDateSchedule(@PathVariable(value = "studentId") final Long studentId, @RequestParam(value = "targetDate") final LocalDateTime targetDate) {
+        log.info("studentId: {}", studentId);
+
+        final TodayScheduleResponse response = studentService.readSchedule(studentId, targetDate);
 
         return ResponseEntity.ok()
                 .body(response);

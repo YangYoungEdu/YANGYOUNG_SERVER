@@ -11,5 +11,7 @@ public interface StudentSectionRepository extends JpaRepository<StudentSection, 
 
     List<StudentSection> findAllBySectionId(Long sectionId);
 
+    List<StudentSection> findAllBySectionIdAndStudentIdIn(Long sectionId, List<Long> studentIdList);
+
     Optional<StudentSection> findBySectionIdAndStudentId(Long sectionId, Long studentId);
 }

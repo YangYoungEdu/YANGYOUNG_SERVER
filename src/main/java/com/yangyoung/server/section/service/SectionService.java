@@ -93,9 +93,16 @@ public class SectionService {
         return new SectionResponse(section);
     }
 
-    // 반 학생 추가/삭제
+    // 반 학생 추가
     @Transactional
     public void updateSectionStudent(SectionStudentUpdateRequest request) {
         sectionSubService.assignStudentToSection(request.getSectionId(), request.getStudentIdList());
+    }
+
+    // 반 학생 삭제
+    @Transactional
+    public void deleteSectionStudents(Long sectionId, List<Long> studentIdList) {
+        List<StudentSection> studentSectionList = studentSectionRepository.findAllBySectionIdAndStudentIdIn(sectionId, studentIdList);
+        studentSectionRepository.deleteAll(studentSectionList);
     }
 }

@@ -107,6 +107,28 @@ public class StudentService {
         );
     }
 
+    // 학생 날짜별 일정 조회(인적 사항 + 오늘 수강 강의 + 과제)
+    @Transactional
+    public TodayScheduleResponse readSchedule(Long studentId, LocalDateTime targetDate) {
+
+        LocalDateTime now = targetDate.plusHours(9);
+        LocalDate today = now.toLocalDate();
+        DayOfWeek todayDayOfWeek = today.getDayOfWeek();
+
+        StudentDetailResponse studentDetailResponse = readStudentDetail(studentId);
+
+        LectureAllResponse lectureAllResponse = lectureSubService.getTodayLectures(studentDetailResponse.getLectureAllResponse(), todayDayOfWeek, today);
+
+        StudentTaskAllResponse studentTaskAllResponse = taskService.getTasksByStudentAndDate(studentId, today);
+
+        return new TodayScheduleResponse(
+                today,
+                studentDetailResponse.getStudentResponse(),
+                lectureAllResponse,
+                studentTaskAllResponse
+        );
+    }
+
     // 반 - 학생 정보 조회
     @Transactional
     public StudentAllResponse getAllStudentsBySection(Long sectionId) {

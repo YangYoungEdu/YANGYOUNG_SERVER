@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @RestController
@@ -71,11 +72,21 @@ public class SectionController {
                 .body(response);
     }
 
-    // 반 학생 추가/삭제
+    // 반 학생 추가 컨트롤러
     @PatchMapping("/student")
     public ResponseEntity<Void> updateSectionStudent(@RequestBody final SectionStudentUpdateRequest request) {
 
         sectionService.updateSectionStudent(request);
+
+        return ResponseEntity.ok()
+                .build();
+    }
+
+    // 반 학생 삭제 컨트롤러
+    @DeleteMapping("/student")
+    public ResponseEntity<Void> deleteSectionStudent(@RequestParam(value = "sectionId") Long sectionId, @RequestParam(value = "studentIdList") List<Long> studentIdList) {
+
+        sectionService.deleteSectionStudents(sectionId, studentIdList);
 
         return ResponseEntity.ok()
                 .build();
