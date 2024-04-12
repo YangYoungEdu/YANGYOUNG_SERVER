@@ -37,10 +37,6 @@ public class Student extends BaseEntity {
 
     private String parentPhoneNumber;
 
-    //    @ManyToOne()
-//    @JoinColumn(name = "section_id")
-//    @JsonManagedReference
-//    private Section section;
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonBackReference
     private List<StudentSection> studentSectionList;
