@@ -8,14 +8,11 @@ import com.yangyoung.server.attendance.dto.request.AttendanceStudentRequest;
 import com.yangyoung.server.attendance.dto.request.AttendanceUpdateRequest;
 import com.yangyoung.server.attendance.dto.response.AttendanceAllResponse;
 import com.yangyoung.server.attendance.dto.response.AttendanceResponse;
-import com.yangyoung.server.exception.ErrorCode;
 import com.yangyoung.server.exception.attendance.AttendanceNotFoundException;
 import com.yangyoung.server.section.domain.Section;
-import com.yangyoung.server.section.domain.SectionRepository;
-import com.yangyoung.server.section.service.SectionSubService;
+import com.yangyoung.server.section.service.SectionUtilService;
 import com.yangyoung.server.student.domain.Student;
-import com.yangyoung.server.student.domain.StudentRepository;
-import com.yangyoung.server.student.service.StudentSubService;
+import com.yangyoung.server.student.service.StudentUtilService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,11 +28,9 @@ import java.util.*;
 public class AttendanceService {
 
     private final AttendanceRepository attendanceRepository;
-    private final StudentRepository studentRepository;
-    private final SectionRepository sectionRepository;
 
-    private final StudentSubService studentSubService;
-    private final SectionSubService sectionSubService;
+    private final StudentUtilService studentUtilService;
+    private final SectionUtilService sectionUtilService;
 
     // 출석 체크 메소드 (학생)
     @Transactional
@@ -45,8 +40,8 @@ public class AttendanceService {
         LocalDateTime start = now.withHour(0).withMinute(0).withSecond(0);
         LocalDateTime end = now.withHour(23).withMinute(59).withSecond(59);
 
-        Student attendedStudent = studentSubService.findStudentByStudentId(request.getStudentId());
-        List<Section> sectionList = sectionSubService.findSectionsByStudentId(request.getStudentId());
+        Student attendedStudent = studentUtilService.findStudentByStudentId(request.getStudentId());
+        List<Section> sectionList = sectionUtilService.findSectionsByStudentId(request.getStudentId());
         List<Attendance> attendanceList = new ArrayList<>();
         for (Section section : sectionList) {
             Optional<Attendance> check = attendanceRepository.findByStudentIdAndSectionIdAndAttendedDateTimeBetween(
@@ -79,7 +74,7 @@ public class AttendanceService {
         LocalDateTime startDateTime = targetDate.atStartOfDay();
         LocalDateTime endDateTime = targetDate.atTime(23, 59, 59);
 
-        Section attendedSection = sectionSubService.findSectionBySectionId(request.getSectionId());
+        Section attendedSection = sectionUtilService.findSectionBySectionId(request.getSectionId());
 
         List<Attendance> attendanceList = new ArrayList<>();
         List<AttendanceUpdateRequest> attendanceStudentRequestedList = request.getAttendanceUpdateRequestList();
@@ -98,7 +93,7 @@ public class AttendanceService {
             }
             if (attendance.isEmpty()) {
                 log.info("isEmpty");
-                Student student = studentSubService.findStudentByStudentId(attendanceUpdateRequest.getStudentId());
+                Student student = studentUtilService.findStudentByStudentId(attendanceUpdateRequest.getStudentId());
 
                 Attendance newAttendance = new Attendance(
                         attendanceUpdateRequest.getAttendedDateTime(),
@@ -142,7 +137,7 @@ public class AttendanceService {
     @Transactional
     public AttendanceAllResponse getAllAttendancesBySection(Long sectionId, LocalDateTime selectedDay) {
 
-        Section section = sectionSubService.findSectionBySectionId(sectionId);
+        Section section = sectionUtilService.findSectionBySectionId(sectionId);
 
         LocalDate targetDate = selectedDay.toLocalDate();
         LocalDateTime startDateTime = targetDate.atStartOfDay();
@@ -156,7 +151,7 @@ public class AttendanceService {
                     latestAttendanceMap.put(studentId, attendance); // 최신 정보 업데이트
                 });
 
-        List<Student> studentList = studentSubService.getStudentsBySectionId(sectionId);
+        List<Student> studentList = studentUtilService.getStudentsBySectionId(sectionId);
         List<AttendanceResponse> attendanceResponseList = new ArrayList<>();
 
         for (Student student : studentList) {

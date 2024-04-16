@@ -2,7 +2,6 @@ package com.yangyoung.server.lecture.service;
 
 import com.yangyoung.server.day.domain.Day;
 import com.yangyoung.server.day.domain.DayRepository;
-import com.yangyoung.server.exception.ErrorCode;
 import com.yangyoung.server.exception.lecture.LectureNotFoundException;
 import com.yangyoung.server.lecture.domain.Lecture;
 import com.yangyoung.server.lecture.domain.LectureRepository;
@@ -14,10 +13,9 @@ import com.yangyoung.server.lectureDate.domain.LectureDateRepository;
 import com.yangyoung.server.lectureDay.domain.LectureDay;
 import com.yangyoung.server.lectureDay.domain.LectureDayRepository;
 import com.yangyoung.server.section.domain.Section;
-import com.yangyoung.server.section.service.SectionSubService;
+import com.yangyoung.server.section.service.SectionUtilService;
 import com.yangyoung.server.sectionLecture.domain.SectionLecture;
 import com.yangyoung.server.sectionLecture.domain.SectionLectureRepository;
-import com.yangyoung.server.util.UtilService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -36,7 +34,7 @@ public class LectureSubService {
 
     private final LectureRepository lectureRepository;
     private final LectureDayRepository lectureDayRepository;
-    private final SectionSubService sectionSubService;
+    private final SectionUtilService sectionUtilService;
     private final SectionLectureRepository sectionLectureRepository;
     private final DayRepository dayRepository;
     private final LectureDateRepository lectureDateRepository;
@@ -88,7 +86,7 @@ public class LectureSubService {
     // 반 할당
     public List<String> assignLectureToSection(List<Long> sectionId, Lecture lecture) {
 
-        List<Section> section = sectionSubService.findSectionsBySectionIdList(sectionId);
+        List<Section> section = sectionUtilService.findSectionsBySectionIdList(sectionId);
         List<SectionLecture> sectionLectureList = section.stream()
                 .map(section1 -> SectionLecture.builder()
                         .section(section1)

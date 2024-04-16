@@ -16,13 +16,13 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class StudentSubService {
+public class StudentUtilService {
 
     private final StudentRepository studentRepository;
     private final StudentSectionRepository studentSectionRepository;
-    private final Logger logger = LoggerFactory.getLogger(StudentSubService.class);
+    private final Logger logger = LoggerFactory.getLogger(StudentUtilService.class);
 
-    // id에 해당하는 학생이 찾기
+    // 학생 검색 - STUDENT ID
     @Transactional
     public Student findStudentByStudentId(Long studentId) {
         Optional<Student> student = studentRepository.findById(studentId);
@@ -31,14 +31,13 @@ public class StudentSubService {
             logger.info(message);
             throw new StudentNotFoundException(message);
         }
+
         return student.get();
     }
 
-    // 반 id로 학생 엔티티 조회
+    // 반별 학생 검색
     @Transactional
     public List<Student> getStudentsBySectionId(Long sectionId) {
-        return studentSectionRepository.findAllBySectionId(sectionId).stream()
-                .map(StudentSection::getStudent)
-                .toList();
+        return studentSectionRepository.findStudentsBySectionId(sectionId);
     }
 }

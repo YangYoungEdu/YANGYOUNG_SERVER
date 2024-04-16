@@ -1,6 +1,5 @@
 package com.yangyoung.server.section.service;
 
-import com.yangyoung.server.exception.ErrorCode;
 import com.yangyoung.server.lecture.dto.response.LectureAllResponse;
 import com.yangyoung.server.lecture.service.LectureService;
 import com.yangyoung.server.section.domain.Section;
@@ -14,7 +13,7 @@ import com.yangyoung.server.section.dto.response.SectionResponse;
 import com.yangyoung.server.sectionTask.dto.response.SectionTaskAllResponse;
 import com.yangyoung.server.student.dto.response.StudentAllResponse;
 import com.yangyoung.server.student.service.StudentService;
-import com.yangyoung.server.student.service.StudentSubService;
+import com.yangyoung.server.student.service.StudentUtilService;
 import com.yangyoung.server.studentSection.domain.StudentSectionRepository;
 import com.yangyoung.server.task.service.TaskService;
 import jakarta.transaction.Transactional;
@@ -33,16 +32,16 @@ public class SectionService {
     private final StudentSectionRepository studentSectionRepository;
     private final LectureService lectureService;
     private final StudentService studentService;
-    private final SectionSubService sectionSubService;
+    private final SectionUtilService sectionUtilService;
     private final TaskService taskService;
-    private final StudentSubService studentSubService;
+    private final StudentUtilService studentUtilService;
 
     // 반 생성
     @Transactional
     public SectionResponse createSection(SectionCreateRequest request) {
 
         Section section = sectionRepository.save(request.toEntity());
-        sectionSubService.assignStudentToSection(section.getId(), request.getStudentIdList());
+        sectionUtilService.assignStudentToSection(section.getId(), request.getStudentIdList());
 
         return new SectionResponse(section);
     }
@@ -63,7 +62,7 @@ public class SectionService {
     @Transactional
     public SectionDetailResponse readSectionLecture(Long sectionId) {
 
-        SectionResponse sectionResponse = sectionSubService.readSectionInfo(sectionId);
+        SectionResponse sectionResponse = sectionUtilService.readSectionInfo(sectionId);
         LectureAllResponse lectureAllResponse = lectureService.getLecturesBySection(sectionId);
         StudentAllResponse studentAllResponse = studentService.getAllStudentsBySection(sectionId);
         SectionTaskAllResponse sectionTaskAllResponse = taskService.readTaskBySection(sectionId);
@@ -73,7 +72,7 @@ public class SectionService {
     // 반 삭제
     @Transactional
     public void deleteSection(Long sectionId) {
-        Section section = sectionSubService.findSectionBySectionId(sectionId);
+        Section section = sectionUtilService.findSectionBySectionId(sectionId);
         sectionRepository.delete(section);
     }
 
@@ -81,7 +80,7 @@ public class SectionService {
     @Transactional
     public SectionResponse updateSection(SectionUpdateRequest request) {
 
-        Section section = sectionSubService.findSectionBySectionId(request.getSectionId());
+        Section section = sectionUtilService.findSectionBySectionId(request.getSectionId());
         section.update(request.getName(), request.getTeacher(), request.getHomeRoom());
         log.info("update contetns: {} {} {}", section.getName(), section.getTeacher(), section.getHomeRoom());
         sectionRepository.save(section);
@@ -92,6 +91,6 @@ public class SectionService {
     // 반 학생 추가/삭제
     @Transactional
     public void updateSectionStudent(SectionStudentUpdateRequest request) {
-        sectionSubService.assignStudentToSection(request.getSectionId(), request.getStudentIdList());
+        sectionUtilService.assignStudentToSection(request.getSectionId(), request.getStudentIdList());
     }
 }

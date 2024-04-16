@@ -21,13 +21,13 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class SectionSubService {
+public class SectionUtilService {
 
     private final SectionRepository sectionRepository;
     private final StudentSectionRepository studentSectionRepository;
     private final StudentRepository studentRepository;
 
-    private final Logger logger = LoggerFactory.getLogger(SectionSubService.class);
+    private final Logger logger = LoggerFactory.getLogger(SectionUtilService.class);
 
     // id에 해당하는 반 정보 조회 - 단일
     @Transactional
@@ -44,7 +44,7 @@ public class SectionSubService {
     // id에 해당하는 반 정보 조회 - 다중
     @Transactional
     public List<Section> findSectionsBySectionIdList(List<Long> sectionIdList) {
-        return sectionRepository.findAllById(sectionIdList);
+        return sectionRepository.findByIdIn(sectionIdList);
     }
 
     // id에 해당하는 반 정보 조회
@@ -62,10 +62,7 @@ public class SectionSubService {
     // 학생이 속한 반의 엔티티 조회
     @Transactional
     public List<Section> findSectionsByStudentId(Long studentId) {
-        List<StudentSection> studentSectionList = studentSectionRepository.findByStudentId(studentId);
-        return studentSectionList.stream()
-                .map(StudentSection::getSection)
-                .toList();
+        return studentSectionRepository.findSectionByStudentId(studentId);
     }
 
     // 반에 학생 할당
@@ -82,7 +79,7 @@ public class SectionSubService {
             }
             if (studentSection.isEmpty()) {
                 Optional<Student> student = studentRepository.findById(studentIdList.get(i));
-                if(student.isEmpty()) {
+                if (student.isEmpty()) {
                     String message = String.format("Student not found. (studentId: %d)", studentIdList.get(i));
                     logger.info(message);
                     throw new StudentNotFoundException(message);

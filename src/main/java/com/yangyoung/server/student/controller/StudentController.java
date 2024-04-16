@@ -19,7 +19,7 @@ public class StudentController {
     @PostMapping("")
     public ResponseEntity<StudentResponse> createStudent(@RequestBody final StudentCreateRequest request) {
 
-        final StudentResponse response = studentService.createStudent(request);
+        final StudentResponse response = studentService.addStudent(request);
 
         return ResponseEntity.ok()
                 .body(response);
@@ -51,7 +51,7 @@ public class StudentController {
     @GetMapping("/today/{studentId}")
     public ResponseEntity<TodayScheduleResponse> readTodaySchedule(@PathVariable final Long studentId) {
 
-        final TodayScheduleResponse response = studentService.readTodaySchedule(studentId);
+        final TodayScheduleResponse response = studentService.getTodaySchedule(studentId);
 
         return ResponseEntity.ok()
                 .body(response);

@@ -1,13 +1,13 @@
 package com.yangyoung.server.task.service;
 
 import com.yangyoung.server.section.domain.Section;
-import com.yangyoung.server.section.service.SectionSubService;
+import com.yangyoung.server.section.service.SectionUtilService;
 import com.yangyoung.server.sectionTask.domain.SectionTask;
 import com.yangyoung.server.sectionTask.domain.SectionTaskRepository;
 import com.yangyoung.server.sectionTask.dto.response.SectionTaskAllResponse;
 import com.yangyoung.server.sectionTask.dto.response.SectionTaskResponse;
 import com.yangyoung.server.student.domain.Student;
-import com.yangyoung.server.student.service.StudentSubService;
+import com.yangyoung.server.student.service.StudentUtilService;
 import com.yangyoung.server.studentTask.domain.StudentTask;
 import com.yangyoung.server.studentTask.domain.StudentTaskRepository;
 import com.yangyoung.server.studentTask.domain.TaskProgress;
@@ -15,7 +15,6 @@ import com.yangyoung.server.studentTask.dto.response.StudentTaskAllResponse;
 import com.yangyoung.server.studentTask.dto.response.StudentTaskResponse;
 import com.yangyoung.server.task.domain.Task;
 import com.yangyoung.server.task.domain.TaskRepository;
-import com.yangyoung.server.task.domain.TaskType;
 import com.yangyoung.server.task.dto.request.*;
 import com.yangyoung.server.task.dto.response.TaskPostResponse;
 import jakarta.transaction.Transactional;
@@ -32,15 +31,12 @@ import java.util.List;
 @Slf4j
 public class TaskService {
 
-    private final TaskType STUDENT = TaskType.STUDENT;
-    private final TaskType SECTION = TaskType.SECTION;
-
     private final TaskRepository taskRepository;
     private final StudentTaskRepository studentTaskRepository;
     private final SectionTaskRepository sectionTaskRepository;
 
-    private final StudentSubService studentSubService;
-    private final SectionSubService sectionSubService;
+    private final StudentUtilService studentUtilService;
+    private final SectionUtilService sectionUtilService;
     private final TaskSubService taskSubService;
 
     // 과제 여러반 추가
@@ -51,7 +47,7 @@ public class TaskService {
 
         List<SectionTask> sectionTaskList = new ArrayList<>();
         for (int i = 0; i < request.getSectionIdList().size(); i++) {
-            Section section = sectionSubService.findSectionBySectionId(request.getSectionIdList().get(i));
+            Section section = sectionUtilService.findSectionBySectionId(request.getSectionIdList().get(i));
             SectionTask sectionTask = SectionTask.builder().
                     section(section).
                     task(task).
@@ -61,7 +57,7 @@ public class TaskService {
         sectionTaskRepository.saveAll(sectionTaskList);
 
         List<Student> studentList = request.getSectionIdList().stream()
-                .map(studentSubService::getStudentsBySectionId)
+                .map(studentUtilService::getStudentsBySectionId)
                 .flatMap(List::stream)
                 .toList();
         List<StudentTask> studentTaskList = studentList.stream()
@@ -76,7 +72,7 @@ public class TaskService {
 
         Task task = taskRepository.save(request.toEntity());
 
-        Student student = studentSubService.findStudentByStudentId(request.getStudentId());
+        Student student = studentUtilService.findStudentByStudentId(request.getStudentId());
 
         StudentTask studentTask = StudentTask.builder().
                 student(student).
@@ -109,7 +105,7 @@ public class TaskService {
     @Transactional
     public TaskPostResponse createTaskBySection(TaskSectionRequest request) {
 
-        Section section = sectionSubService.findSectionBySectionId(request.getSectionId());
+        Section section = sectionUtilService.findSectionBySectionId(request.getSectionId());
 
         Task task = taskRepository.save(request.toEntity());
 
@@ -120,7 +116,7 @@ public class TaskService {
         sectionTaskRepository.save(sectionTask);
 
 
-        List<Student> studentList = studentSubService.getStudentsBySectionId(request.getSectionId());
+        List<Student> studentList = studentUtilService.getStudentsBySectionId(request.getSectionId());
         List<StudentTask> studentTaskList = new ArrayList<>();
         for (Student student : studentList) {
             StudentTask studentTask = new StudentTask(
