@@ -89,8 +89,9 @@ public class LectureService {
     }
 
     // 강의 삭제
+    @Transactional
     public void deleteLecture(Long lectureId) {
-
+        log.info("lectureId: {}", lectureId);
         Lecture lecture = isExistLectureById(lectureId);
         lectureRepository.delete(lecture);
 

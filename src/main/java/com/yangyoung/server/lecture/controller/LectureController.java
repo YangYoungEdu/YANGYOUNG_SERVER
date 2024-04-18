@@ -51,7 +51,7 @@ public class LectureController {
 
     // 반 별 강의 조회 컨트롤러
     @GetMapping("/{lectureId}")
-    public ResponseEntity<LectureResponse> getOneLecture(@PathVariable final Long lectureId) {
+    public ResponseEntity<LectureResponse> getOneLecture(@PathVariable(value = "lectureId") final Long lectureId) {
 
         LectureResponse response = lectureService.getOneLecture(lectureId);
 
@@ -62,7 +62,7 @@ public class LectureController {
 
     // 강의 삭제 컨트롤러
     @DeleteMapping("/{lectureId}")
-    public ResponseEntity<Void> deleteLecture(@PathVariable final Long lectureId) {
+    public ResponseEntity<Void> deleteLecture(@PathVariable(value = "lectureId") final Long lectureId) {
 
         lectureService.deleteLecture(lectureId);
 
