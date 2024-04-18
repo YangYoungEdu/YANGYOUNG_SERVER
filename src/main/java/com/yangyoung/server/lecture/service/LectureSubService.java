@@ -51,11 +51,6 @@ public class LectureSubService {
         }
     }
 
-    // 강의 정보 생성
-    public Lecture createLectureInfo(LectureCreateRequest request) {
-        return lectureRepository.save(request.toEntity());
-    }
-
     // 강의 요일 할당
     public void assignDayToLecture(Lecture lecture, List<String> dayList) {
 

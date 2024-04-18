@@ -5,11 +5,10 @@ import com.yangyoung.server.exception.MyException;
 import com.yangyoung.server.lecture.domain.Lecture;
 import com.yangyoung.server.lecture.domain.LectureRepository;
 import com.yangyoung.server.lecture.dto.request.LectureCreateRequest;
+import com.yangyoung.server.lecture.dto.request.LectureSeqUpdateRequest;
 import com.yangyoung.server.lecture.dto.response.LectureAllResponse;
-import com.yangyoung.server.lecture.dto.response.LectureResponse;
 import com.yangyoung.server.lecture.dto.response.LecturePostResponse;
-import com.yangyoung.server.section.domain.Section;
-import com.yangyoung.server.section.service.SectionSubService;
+import com.yangyoung.server.lecture.dto.response.LectureResponse;
 import com.yangyoung.server.sectionLecture.domain.SectionLecture;
 import com.yangyoung.server.sectionLecture.domain.SectionLectureRepository;
 import jakarta.transaction.Transactional;
@@ -20,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -29,14 +29,13 @@ public class LectureService {
     private final SectionLectureRepository sectionLectureRepository;
 
     private final LectureSubService lectureSubService;
-    private final SectionSubService sectionSubService;
 
     // 강의 등록(이름 중복 확인 + 정보 생성 + 요일 할당 + 반 할당)
     @Transactional
     public LecturePostResponse createLecture(LectureCreateRequest request) {
 
         lectureSubService.isExistLectureByName(request.getName());
-        Lecture lecture = lectureSubService.createLectureInfo(request);
+        Lecture lecture = lectureRepository.save(request.toEntity());
         lectureSubService.assignDayToLecture(lecture, request.getDayList());
         lectureSubService.assignDateToLecture(lecture, request.getDateList());
         List<String> sectionName = lectureSubService.assignLectureToSection(request.getSectionIdList(), lecture);
@@ -55,6 +54,24 @@ public class LectureService {
                 .collect(Collectors.toList());
 
         return new LectureAllResponse(lectureResponseList, lectureResponseList.size());
+    }
+
+    // 강의 리스트 순서 변경
+    @Transactional
+    public void updateLectureSeq(LectureSeqUpdateRequest request) {
+
+        request.getLectureSeqList()
+                .forEach(map -> {
+                    Long lectureId = map.keySet().stream().findFirst().orElse(null);
+                    Long seq = map.values().stream().findFirst().orElse(null);
+
+                    Lecture lecture = isExistLectureById(lectureId);
+                    if (lecture != null) {
+                        lecture.updateLectureSeq(seq);
+                    } else {
+                        throw new IllegalArgumentException("Lecture not found for ID: " + lectureId);
+                    }
+                });
     }
 
     // 반 별 강의 조회

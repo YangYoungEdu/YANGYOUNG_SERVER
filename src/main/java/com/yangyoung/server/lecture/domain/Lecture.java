@@ -24,6 +24,9 @@ public class Lecture extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long seq;
+
     private String name;
 
     private String teacher;
@@ -56,6 +59,10 @@ public class Lecture extends BaseEntity {
         this.endTime = endTime;
         this.lectureRoom = lectureRoom;
         this.sectionLectureList = sectionLectureList;
+    }
+
+    public void updateLectureSeq(Long seq) {
+        this.seq = seq;
     }
 
     public void updateLectureDay(List<LectureDay> dayList) {
