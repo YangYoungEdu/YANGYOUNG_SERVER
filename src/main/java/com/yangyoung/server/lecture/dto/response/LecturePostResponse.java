@@ -30,9 +30,11 @@ public class LecturePostResponse {
     public LecturePostResponse(Lecture lecture, List<String> sectionNameList) {
         this.id = lecture.getId();
         this.name = lecture.getName();
-        this.dayList = lecture.getDayList().stream().
-                map(lectureDay -> lectureDay.getDay().getDayName()).
-                toList();
+        if (lecture.getDayList() != null) {
+            this.dayList = lecture.getDayList().stream().
+                    map(lectureDay -> lectureDay.getDay().getDayName()).
+                    toList();
+        }
         this.startTime = lecture.getStartTime();
         this.endTime = lecture.getEndTime();
         this.room = lecture.getLectureRoom();

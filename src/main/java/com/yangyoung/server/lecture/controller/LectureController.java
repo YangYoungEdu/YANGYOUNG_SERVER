@@ -2,6 +2,7 @@ package com.yangyoung.server.lecture.controller;
 
 import com.yangyoung.server.lecture.dto.request.LectureCreateRequest;
 import com.yangyoung.server.lecture.dto.request.LectureSeqUpdateRequest;
+import com.yangyoung.server.lecture.dto.request.LectureUpdateRequest;
 import com.yangyoung.server.lecture.dto.response.LectureAllResponse;
 import com.yangyoung.server.lecture.dto.response.LectureResponse;
 import com.yangyoung.server.lecture.dto.response.LecturePostResponse;
@@ -58,6 +59,15 @@ public class LectureController {
         return ResponseEntity.ok()
                 .body(response);
 
+    }
+
+    // 강의 수정 컨트롤러
+    @PatchMapping("")
+    public ResponseEntity<Void> updateLecture(@RequestBody final LectureUpdateRequest request) {
+
+        lectureService.updateLecture(request);
+
+        return ResponseEntity.noContent().build();
     }
 
     // 강의 삭제 컨트롤러
