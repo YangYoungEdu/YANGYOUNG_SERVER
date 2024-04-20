@@ -42,7 +42,7 @@ public class StudentController {
 
     // 학생 상세 조회 컨트롤러
     @GetMapping("/{studentId}")
-    public ResponseEntity<StudentDetailResponse> readStudentDetail(@PathVariable final Long studentId) {
+    public ResponseEntity<StudentDetailResponse> readStudentDetail(@PathVariable(value = "studentId") final Long studentId) {
 
         final StudentDetailResponse response = studentService.readStudentDetail(studentId);
 
@@ -75,7 +75,7 @@ public class StudentController {
 
     // 반 - 학생 정보 조회 컨트롤러
     @GetMapping("/section/{sectionId}")
-    public ResponseEntity<StudentAllResponse> readStudentBySection(@PathVariable final Long sectionId) {
+    public ResponseEntity<StudentAllResponse> readStudentBySection(@PathVariable(value = "sectionId") final Long sectionId) {
 
         final StudentAllResponse response = studentService.getAllStudentsBySection(sectionId);
 
@@ -96,7 +96,7 @@ public class StudentController {
 
     // 학생 삭제 컨트롤러
     @DeleteMapping("/{studentId}")
-    public ResponseEntity<StudentResponse> deleteStudent(@PathVariable final Long studentId) {
+    public ResponseEntity<StudentResponse> deleteStudent(@PathVariable(value = "studentId") final Long studentId) {
 
         final StudentResponse response = studentService.deleteStudent(studentId);
 

@@ -44,7 +44,7 @@ public class SectionController {
 
     // 반 상세 조회
     @GetMapping("/{sectionId}")
-    public ResponseEntity<SectionDetailResponse> getOneSection(@PathVariable final Long sectionId) {
+    public ResponseEntity<SectionDetailResponse> getOneSection(@PathVariable(value = "sectionId") final Long sectionId) {
 
         final SectionDetailResponse response = sectionService.readSectionLecture(sectionId);
 
@@ -55,7 +55,7 @@ public class SectionController {
 
     // 반 삭제
     @DeleteMapping("/{sectionId}")
-    public ResponseEntity<Void> deleteSection(@PathVariable final Long sectionId) {
+    public ResponseEntity<Void> deleteSection(@PathVariable(value = "sectionId") final Long sectionId) {
 
         sectionService.deleteSection(sectionId);
 

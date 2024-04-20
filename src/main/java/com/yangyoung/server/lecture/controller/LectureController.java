@@ -1,6 +1,8 @@
 package com.yangyoung.server.lecture.controller;
 
 import com.yangyoung.server.lecture.dto.request.LectureCreateRequest;
+import com.yangyoung.server.lecture.dto.request.LectureSeqUpdateRequest;
+import com.yangyoung.server.lecture.dto.request.LectureUpdateRequest;
 import com.yangyoung.server.lecture.dto.response.LectureAllResponse;
 import com.yangyoung.server.lecture.dto.response.LectureResponse;
 import com.yangyoung.server.lecture.dto.response.LecturePostResponse;
@@ -39,9 +41,18 @@ public class LectureController {
 
     }
 
+    // 강의 순서 변경 컨트롤러
+    @PatchMapping("/seq")
+    public ResponseEntity<Void> updateLectureSeq(@RequestBody final LectureSeqUpdateRequest request) {
+
+        lectureService.updateLectureSeq(request);
+
+        return ResponseEntity.noContent().build();
+    }
+
     // 반 별 강의 조회 컨트롤러
     @GetMapping("/{lectureId}")
-    public ResponseEntity<LectureResponse> getOneLecture(@PathVariable final Long lectureId) {
+    public ResponseEntity<LectureResponse> getOneLecture(@PathVariable(value = "lectureId") final Long lectureId) {
 
         LectureResponse response = lectureService.getOneLecture(lectureId);
 
@@ -50,9 +61,18 @@ public class LectureController {
 
     }
 
+    // 강의 수정 컨트롤러
+    @PatchMapping("")
+    public ResponseEntity<Void> updateLecture(@RequestBody final LectureUpdateRequest request) {
+
+        lectureService.updateLecture(request);
+
+        return ResponseEntity.noContent().build();
+    }
+
     // 강의 삭제 컨트롤러
     @DeleteMapping("/{lectureId}")
-    public ResponseEntity<Void> deleteLecture(@PathVariable final Long lectureId) {
+    public ResponseEntity<Void> deleteLecture(@PathVariable(value = "lectureId") final Long lectureId) {
 
         lectureService.deleteLecture(lectureId);
 

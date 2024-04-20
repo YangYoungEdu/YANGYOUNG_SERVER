@@ -17,6 +17,8 @@ public class LectureResponse {
 
     private Long id;
 
+    private Long lectureSeq;
+
     private String teacher;
 
     private String name;
@@ -38,6 +40,7 @@ public class LectureResponse {
 
     public LectureResponse(Lecture lecture) {
         this.id = lecture.getId();
+        this.lectureSeq = lecture.getLectureSeq();
         this.teacher = lecture.getTeacher();
         this.name = lecture.getName();
         this.dayList = lecture.getDayList().stream().

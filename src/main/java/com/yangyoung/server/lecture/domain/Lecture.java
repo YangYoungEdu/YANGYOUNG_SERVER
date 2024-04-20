@@ -24,6 +24,10 @@ public class Lecture extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(unique = true)
+    private Long lectureSeq;
+
     private String name;
 
     private String teacher;
@@ -58,12 +62,16 @@ public class Lecture extends BaseEntity {
         this.sectionLectureList = sectionLectureList;
     }
 
-    public void updateLectureDay(List<LectureDay> dayList) {
-        this.dayList = dayList;
+    public void update(String name, String teacher, LocalTime startTime, LocalTime endTime, String lectureRoom) {
+        if (!name.isBlank() && !name.isEmpty()) this.name = name;
+        if (!teacher.isBlank() && !teacher.isEmpty()) this.teacher = teacher;
+        if (startTime != null) this.startTime = startTime;
+        if (endTime != null) this.endTime = endTime;
+        if (!lectureRoom.isBlank() && !lectureRoom.isEmpty()) this.lectureRoom = lectureRoom;
     }
 
-    public void updateLectureDate(List<LectureDate> dateList) {
-        this.dateList = dateList;
+    public void updateLectureSeq(Long lectureSeq) {
+        this.lectureSeq = lectureSeq;
     }
 }
 
